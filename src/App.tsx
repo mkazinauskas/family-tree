@@ -230,6 +230,18 @@ export const App: React.FC = () => {
       );
       if (marriage) {
         marriage.childrenIds = [...marriage.childrenIds, newPersonId];
+      } else {
+        // Create single-parent lineage connection
+        const isMale = target.gender !== 'female';
+        const newMarriage: Marriage = {
+          id: `m-${Date.now()}`,
+          husbandId: isMale ? target.id : '',
+          wifeId: isMale ? '' : target.id,
+          color: target.themePreset?.includes('branch2') ? '#B5761F' : '#2E6B5E',
+          childrenIds: [newPersonId],
+          sectionId: target.sectionId,
+        };
+        newMarriages.push(newMarriage);
       }
     }
 

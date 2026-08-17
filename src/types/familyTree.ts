@@ -60,6 +60,7 @@ export interface Marriage {
   sectionId?: string;
   badgeY?: number; // Custom Y position of drop badge
   busY?: number; // Custom horizontal bus bar Y position
+  noDropLine?: boolean; // If true, omit vertical drop line from spouse dot (useful for cross-section child buses)
 }
 
 export interface ExtraLink {

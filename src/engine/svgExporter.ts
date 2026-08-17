@@ -57,17 +57,21 @@ export function generateTreeSvgString(tree: FamilyTreeData): string {
   // Draw Marriages
   marriageLines.forEach(ml => {
     // Horizontal spouse connector
-    svg += `  <line x1="${ml.x1}" y1="${ml.y1}" x2="${ml.x2}" y2="${ml.y2}" stroke="${ml.color}" stroke-width="2" />\n`;
-    svg += `  <circle cx="${ml.dotX}" cy="${ml.dotY}" r="3.2" fill="${ml.color}" />\n`;
+    if (ml.hasSpouseLine) {
+      svg += `  <line x1="${ml.x1}" y1="${ml.y1}" x2="${ml.x2}" y2="${ml.y2}" stroke="${ml.color}" stroke-width="2" />\n`;
+      svg += `  <circle cx="${ml.dotX}" cy="${ml.dotY}" r="3.2" fill="${ml.color}" />\n`;
+    }
 
-    // Drop line to children
-    if (ml.hasChildren && ml.dropEndY && ml.busY && ml.busX1 !== undefined && ml.busX2 !== undefined) {
-      svg += `  <path d="M${ml.dotX} ${ml.dotY} L${ml.dotX} ${ml.dropEndY}" stroke="${ml.color}" stroke-width="2" fill="none" />\n`;
+    // Children bus & drops
+    if (ml.hasChildren && ml.busY !== undefined && ml.busX1 !== undefined && ml.busX2 !== undefined) {
+      if (ml.hasDropLine && ml.dropEndY !== undefined) {
+        svg += `  <path d="M${ml.dotX} ${ml.dotY} L${ml.dotX} ${ml.dropEndY}" stroke="${ml.color}" stroke-width="2" fill="none" />\n`;
+      }
       // Sibling bus bar
       svg += `  <line x1="${ml.busX1}" y1="${ml.busY}" x2="${ml.busX2}" y2="${ml.busY}" stroke="${ml.color}" stroke-width="2" />\n`;
 
       // Badge
-      if (ml.badgeText && ml.badgeX !== undefined && ml.badgeY !== undefined) {
+      if (ml.hasDropLine && ml.badgeText && ml.badgeX !== undefined && ml.badgeY !== undefined) {
         const bw = 15;
         const bh = 13;
         svg += `  <rect x="${ml.badgeX - bw / 2}" y="${ml.badgeY - bh / 2}" width="${bw}" height="${bh}" rx="6.5" fill="${ml.color}" />\n`;

@@ -256,27 +256,34 @@ export const Canvas: React.FC<CanvasProps> = ({
             <g className="marriage-connectors-layer">
               {marriageLines.map((ml) => (
                 <g key={ml.marriageId}>
-                  {/* Horizontal Spouse Line */}
-                  <line
-                    x1={ml.x1}
-                    y1={ml.y1}
-                    x2={ml.x2}
-                    y2={ml.y2}
-                    stroke={ml.color}
-                    strokeWidth={2}
-                  />
-                  {/* Marriage Circle Dot */}
-                  <circle cx={ml.dotX} cy={ml.dotY} r={3.2} fill={ml.color} />
-
-                  {/* Drop line to children */}
-                  {ml.hasChildren && ml.dropEndY && ml.busY && ml.busX1 !== undefined && ml.busX2 !== undefined && (
-                    <g>
-                      <path
-                        d={`M${ml.dotX} ${ml.dotY} L${ml.dotX} ${ml.dropEndY}`}
+                  {/* Horizontal Spouse Line & Marriage Dot */}
+                  {ml.hasSpouseLine && (
+                    <>
+                      <line
+                        x1={ml.x1}
+                        y1={ml.y1}
+                        x2={ml.x2}
+                        y2={ml.y2}
                         stroke={ml.color}
                         strokeWidth={2}
-                        fill="none"
                       />
+                      <circle cx={ml.dotX} cy={ml.dotY} r={3.2} fill={ml.color} />
+                    </>
+                  )}
+
+                  {/* Children Bus & Drops */}
+                  {ml.hasChildren && ml.busY !== undefined && ml.busX1 !== undefined && ml.busX2 !== undefined && (
+                    <g>
+                      {/* Vertical Drop Line from Marriage Dot */}
+                      {ml.hasDropLine && ml.dropEndY !== undefined && (
+                        <path
+                          d={`M${ml.dotX} ${ml.dotY} L${ml.dotX} ${ml.dropEndY}`}
+                          stroke={ml.color}
+                          strokeWidth={2}
+                          fill="none"
+                        />
+                      )}
+
                       {/* Sibling bus bar */}
                       <line
                         x1={ml.busX1}
@@ -288,7 +295,7 @@ export const Canvas: React.FC<CanvasProps> = ({
                       />
 
                       {/* Roman Numeral Badge */}
-                      {ml.badgeText && ml.badgeX !== undefined && ml.badgeY !== undefined && (
+                      {ml.hasDropLine && ml.badgeText && ml.badgeX !== undefined && ml.badgeY !== undefined && (
                         <g>
                           <rect
                             x={ml.badgeX - 7.5}

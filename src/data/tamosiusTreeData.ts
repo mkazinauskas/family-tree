@@ -953,6 +953,14 @@ export const TAMOSIUS_GAIDYS_DATA: FamilyTreeData = {
       childrenIds: ['p-laura-brazauskaite', 'p-paulius-brazauskas'],
       sectionId: 'sec-santuoka1',
     },
+    {
+      id: 'm-kazys-irena',
+      husbandId: 'p-kazys-gaidys-1927',
+      wifeId: 'p-irena-matuleviciute',
+      color: '#4E8C7C',
+      childrenIds: [],
+      sectionId: 'sec-santuoka1',
+    },
     // Section 3
     {
       id: 'm-tamosius-morta',
@@ -962,6 +970,8 @@ export const TAMOSIUS_GAIDYS_DATA: FamilyTreeData = {
       marriageBadgeText: 'II',
       marriageDate: '1882.09.21',
       color: '#B5761F',
+      noDropLine: true,
+      busY: 936,
       childrenIds: [
         'p-morta-gaidyte-1883',
         'p-jonas-gaidys-1885',

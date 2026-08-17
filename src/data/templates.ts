@@ -174,6 +174,22 @@ export const TEMPLATES: { id: string; name: string; description: string; data: F
       ],
       marriages: [
         {
+          id: 'm-gediminas-vaikai',
+          husbandId: 'p-gediminas',
+          wifeId: '',
+          color: '#245C8C',
+          childrenIds: ['p-jaunutis', 'p-algirdas', 'p-kestutis'],
+          sectionId: 'sec-gediminas',
+        },
+        {
+          id: 'm-algirdas-jogaila',
+          husbandId: 'p-algirdas',
+          wifeId: '',
+          color: '#2E6B5E',
+          childrenIds: ['p-jogaila'],
+          sectionId: 'sec-vytautas-jogaila',
+        },
+        {
           id: 'm-kestutis-birute',
           husbandId: 'p-kestutis',
           wifeId: 'p-birute',

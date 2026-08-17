@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { 
   GitFork, 
   Plus, 
   Search, 
   Download, 
+  Upload,
   BarChart3, 
   Layers, 
   FileText, 
@@ -26,6 +27,7 @@ interface HeaderProps {
   onOpenMetadata: () => void;
   onOpenAnalytics: () => void;
   onOpenExport: () => void;
+  onImportJson: (data: any) => void;
   onToggleOutliner: () => void;
   isOutlinerOpen: boolean;
 }
@@ -43,9 +45,29 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenMetadata,
   onOpenAnalytics,
   onOpenExport,
+  onImportJson,
   onToggleOutliner,
   isOutlinerOpen,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string);
+        onImportJson(parsed);
+      } catch (err) {
+        alert('Klaida: nepavyko nuskaityti JSON failo. Patikrinkite failo formatą.');
+        console.error('JSON import error:', err);
+      }
+    };
+    reader.readAsText(file);
+    // Reset so same file can be re-imported
+    e.target.value = '';
+  };
   return (
     <header className="top-header">
       {/* Brand & Tree Title */}
@@ -167,6 +189,23 @@ export const Header: React.FC<HeaderProps> = ({
           title="Statistika ir analizė"
         >
           <BarChart3 size={16} />
+        </button>
+
+        {/* Import Button */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={() => fileInputRef.current?.click()}
+          title="Importuoti giminės medį iš JSON failo"
+        >
+          <Upload size={14} />
+          <span>Importuoti</span>
         </button>
 
         {/* Export Button */}

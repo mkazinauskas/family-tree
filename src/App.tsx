@@ -286,6 +286,21 @@ export const App: React.FC = () => {
     setIsTemplatePickerOpen(false);
   };
 
+  // Import JSON
+  const handleImportJson = (data: any) => {
+    // Basic validation
+    if (!data || !Array.isArray(data.people) || !Array.isArray(data.marriages)) {
+      alert('Netinkamas JSON formatas. Failas turi turėti "people" ir "marriages" masyvus.');
+      return;
+    }
+    if (!data.metadata || !data.sections) {
+      alert('Netinkamas JSON formatas. Trūksta "metadata" arba "sections" duomenų.');
+      return;
+    }
+    updateTreeState(data as FamilyTreeData);
+    setSelectedPersonId(null);
+  };
+
   return (
     <div className="app-container">
       {/* Top Header */}
@@ -305,6 +320,7 @@ export const App: React.FC = () => {
         onOpenMetadata={() => setIsMetadataModalOpen(true)}
         onOpenAnalytics={() => setIsAnalyticsModalOpen(true)}
         onOpenExport={() => setIsExportModalOpen(true)}
+        onImportJson={handleImportJson}
         onToggleOutliner={() => setIsOutlinerOpen((prev) => !prev)}
         isOutlinerOpen={isOutlinerOpen}
       />

@@ -22,7 +22,8 @@ export type ThemePreset =
 export interface Person {
   id: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
+  nameLines?: string[]; // Optional explicit line-split for names
   maidenName?: string; // e.g. (VASILYTĖ)
   gender?: 'male' | 'female' | 'other';
   birthDate?: string;
@@ -48,8 +49,8 @@ export interface Person {
 
 export interface Marriage {
   id: string;
-  husbandId: string;
-  wifeId: string;
+  husbandId?: string;
+  wifeId?: string;
   marriageNumber?: string; // "I", "II", "III" or full label
   marriageBadgeText?: string; // "I", "II" for circle badge on drop line
   marriageDate?: string;

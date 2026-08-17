@@ -166,7 +166,7 @@ export const TEMPLATES: { id: string; name: string; description: string; data: F
           themePreset: 'branch2-descendant',
           sectionId: 'sec-vytautas-jogaila',
           generation: 3,
-          x: 1200,
+          x: 1227.5,
           y: 630,
           width: 160,
           height: 95,

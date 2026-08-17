@@ -1,5 +1,6 @@
 import { Person, Marriage, FamilyTreeData, TreeSection } from '../types/familyTree';
 import { getPersonTheme } from './themePresets';
+import { computeCardTextLayout } from './cardTextLayout';
 
 export interface ComputedMarriageLine {
   marriageId: string;
@@ -253,17 +254,6 @@ export function computeTreeLayout(tree: FamilyTreeData): {
 
 // Auto-calculate height of a person card based on content
 export function calculateCardHeight(person: Person): number {
-  if (person.customTheme?.fill && person.height) {
-    // If explicitly set
-    return person.height;
-  }
-  let baseHeight = 28; // Name height
-  if (person.spouseBanner) baseHeight += 22;
-  if (person.maidenName) baseHeight += 14;
-  if (person.birthDate || person.deathDate) baseHeight += 16;
-  if (person.location) baseHeight += 15;
-  if (person.notes && person.notes.length > 0) {
-    baseHeight += person.notes.length * 13 + 6;
-  }
-  return Math.max(48, Math.round(baseHeight));
+  const layout = computeCardTextLayout(person);
+  return layout.ph;
 }

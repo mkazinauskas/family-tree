@@ -1,6 +1,7 @@
 import { FamilyTreeData, Person } from '../types/familyTree';
 import { getPersonTheme } from './themePresets';
 import { computeTreeLayout } from './layoutEngine';
+import { computeCardTextLayout } from './cardTextLayout';
 
 function escapeXml(unsafe: string): string {
   return unsafe
@@ -110,76 +111,36 @@ export function generateTreeSvgString(tree: FamilyTreeData): string {
 
   // Draw Person Cards
   people.forEach(p => {
-    const theme = getPersonTheme(p.themePreset, p.customTheme);
-    const px = p.x ?? 0;
-    const py = p.y ?? 0;
-    const pw = p.width ?? 140;
-    const ph = p.height ?? 80;
+    const layout = computeCardTextLayout(p);
+    const { px, py, pw, ph, banner, lines, theme } = layout;
 
     // Card background
     svg += `  <g class="person-card" data-person-id="${p.id}">\n`;
     svg += `    <rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="6" fill="${theme.fill}" stroke="${theme.stroke}" stroke-width="1.3" />\n`;
 
-    let currentY = py + 19;
-
     // Spouse banner if any
-    if (p.spouseBanner) {
-      const bannerBg = p.spouseBannerBg || theme.bannerBg || theme.stroke;
-      const bannerText = theme.bannerText || '#ffffff';
-      // Rounded top banner path
-      const bx = px + 0.6;
-      const by = py + 0.6;
-      const bw = pw - 1.2;
-      svg += `    <path d="M${bx} ${by + 18.4} L${bx} ${by + 5.4} A5.4 5.4 0 0 1 ${bx + 5.4} ${by} L${bx + bw - 5.4} ${by} A5.4 5.4 0 0 1 ${bx + bw} ${by + 5.4} L${bx + bw} ${by + 18.4} Z" fill="${bannerBg}" />\n`;
-      svg += `    <text x="${px + pw / 2}" y="${py + 13.4}" text-anchor="middle" font-size="8.6" font-weight="bold" fill="${bannerText}" letter-spacing="0.5">${escapeXml(p.spouseBanner)}</text>\n`;
-      currentY = py + 33;
+    if (banner) {
+      svg += `    <path d="${banner.pathD}" fill="${banner.bg}" />\n`;
+      svg += `    <text x="${banner.textX}" y="${banner.textY}" text-anchor="middle" font-size="8.6" font-weight="bold" fill="${banner.textColor}" letter-spacing="0.5">${escapeXml(banner.text)}</text>\n`;
     }
 
-    // Name (FirstName & LastName)
-    svg += `    <text x="${px + pw / 2}" y="${currentY}" text-anchor="middle" font-size="12.0" font-weight="bold" fill="${theme.nameColor}">${escapeXml(p.firstName)}</text>\n`;
-    currentY += 14;
-
-    if (p.lastName) {
-      svg += `    <text x="${px + pw / 2}" y="${currentY}" text-anchor="middle" font-size="12.0" font-weight="bold" fill="${theme.nameColor}">${escapeXml(p.lastName)}</text>\n`;
-      currentY += 14;
-    }
-
-    // Maiden name / Alias
-    if (p.maidenName) {
-      svg += `    <text x="${px + pw / 2}" y="${currentY}" text-anchor="middle" font-size="12.0" font-weight="bold" fill="${theme.nameColor}">${escapeXml(p.maidenName)}</text>\n`;
-      currentY += 14.6;
-    }
-
-    // Dates
-    if (p.birthDate || p.deathDate) {
-      let dateStr = '';
-      if (p.birthDate && p.deathDate) {
-        dateStr = `${p.birthDate} – ${p.deathDate}`;
-      } else if (p.birthDate) {
-        dateStr = p.birthDate;
-      } else {
-        dateStr = `m. ${p.deathDate}`;
+    // Text Lines
+    lines.forEach(line => {
+      let attrs = `x="${line.x}" y="${line.y}" font-size="${line.fontSize}" fill="${line.fill}"`;
+      if (line.textAnchor && line.textAnchor !== 'start') {
+        attrs += ` text-anchor="${line.textAnchor}"`;
       }
-      if (p.ageAtDeath) {
-        dateStr += ` (${p.ageAtDeath})`;
+      if (line.fontWeight) {
+        attrs += ` font-weight="${line.fontWeight}"`;
       }
-      svg += `    <text x="${px + pw / 2}" y="${currentY}" text-anchor="middle" font-size="11.0" fill="${theme.textColor}">${escapeXml(dateStr)}</text>\n`;
-      currentY += 13.7;
-    }
-
-    // Location
-    if (p.location) {
-      svg += `    <text x="${px + pw / 2}" y="${currentY}" text-anchor="middle" font-size="9.2" fill="${theme.textColor}" font-style="italic">${escapeXml(p.location)}</text>\n`;
-      currentY += 11.6;
-    }
-
-    // Notes
-    if (p.notes && p.notes.length > 0) {
-      p.notes.forEach(noteLine => {
-        svg += `    <text x="${px + 7}" y="${currentY}" font-size="9.2" fill="${theme.textColor}">${escapeXml(noteLine)}</text>\n`;
-        currentY += 11.6;
-      });
-    }
+      if (line.fontStyle) {
+        attrs += ` font-style="${line.fontStyle}"`;
+      }
+      if (line.textLength) {
+        attrs += ` textLength="${line.textLength}" lengthAdjust="${line.lengthAdjust || 'spacingAndGlyphs'}"`;
+      }
+      svg += `    <text ${attrs}>${escapeXml(line.text)}</text>\n`;
+    });
 
     svg += `  </g>\n`;
   });

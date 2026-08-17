@@ -31,7 +31,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
   );
 
   const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState(relativeTo ? relativeTo.lastName : '');
+  const [lastName, setLastName] = useState(relativeTo?.lastName || '');
   const [maidenName, setMaidenName] = useState('');
   const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
   const [birthDate, setBirthDate] = useState('');
@@ -64,7 +64,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
       relationType,
       personData: {
         firstName: firstName.trim().toUpperCase(),
-        lastName: lastName.trim().toUpperCase(),
+        lastName: lastName.trim() ? lastName.trim().toUpperCase() : undefined,
         maidenName: maidenName.trim() ? maidenName.trim().toUpperCase() : undefined,
         gender,
         birthDate: birthDate.trim() || undefined,

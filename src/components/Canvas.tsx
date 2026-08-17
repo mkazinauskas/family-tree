@@ -133,7 +133,7 @@ export const Canvas: React.FC<CanvasProps> = ({
   const isPersonMatched = (p: Person): boolean => {
     if (!searchQuery.trim()) return false;
     const query = searchQuery.toLowerCase();
-    const fullName = `${p.firstName} ${p.lastName} ${p.maidenName || ''}`.toLowerCase();
+    const fullName = `${p.firstName} ${p.lastName || ''} ${p.maidenName || ''}`.toLowerCase();
     const dates = `${p.birthDate || ''} ${p.deathDate || ''}`.toLowerCase();
     const loc = (p.location || '').toLowerCase();
     return fullName.includes(query) || dates.includes(query) || loc.includes(query);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Person } from '../types/familyTree';
-import { getPersonTheme } from '../engine/themePresets';
+import { computeCardTextLayout } from '../engine/cardTextLayout';
 
 interface PersonCardProps {
   person: Person;
@@ -23,26 +23,8 @@ export const PersonCard: React.FC<PersonCardProps> = ({
   onAddSpouse,
   onDelete,
 }) => {
-  const theme = getPersonTheme(person.themePreset, person.customTheme);
-  const px = person.x ?? 0;
-  const py = person.y ?? 0;
-  const pw = person.width ?? 140;
-  const ph = person.height ?? 80;
-
-  let currentY = py + 19;
-
-  // Build dates string
-  let dateStr = '';
-  if (person.birthDate && person.deathDate) {
-    dateStr = `${person.birthDate} – ${person.deathDate}`;
-  } else if (person.birthDate) {
-    dateStr = person.birthDate;
-  } else if (person.deathDate) {
-    dateStr = `m. ${person.deathDate}`;
-  }
-  if (person.ageAtDeath) {
-    dateStr += ` (${person.ageAtDeath})`;
-  }
+  const layout = computeCardTextLayout(person);
+  const { px, py, pw, ph, banner, lines, theme } = layout;
 
   return (
     <g
@@ -85,118 +67,43 @@ export const PersonCard: React.FC<PersonCardProps> = ({
       />
 
       {/* Spouse Banner if any */}
-      {person.spouseBanner && (
+      {banner && (
         <g>
-          <path
-            d={`M${px + 0.6} ${py + 19} L${px + 0.6} ${py + 6} A5.4 5.4 0 0 1 ${px + 6} ${py + 0.6} L${px + pw - 6} ${py + 0.6} A5.4 5.4 0 0 1 ${px + pw - 0.6} ${py + 6} L${px + pw - 0.6} ${py + 19} Z`}
-            fill={person.spouseBannerBg || theme.bannerBg || theme.stroke}
-          />
+          <path d={banner.pathD} fill={banner.bg} />
           <text
-            x={px + pw / 2}
-            y={py + 13.4}
+            x={banner.textX}
+            y={banner.textY}
             textAnchor="middle"
             fontSize="8.6"
             fontWeight="bold"
-            fill={theme.bannerText || '#ffffff'}
+            fill={banner.textColor}
             letterSpacing="0.5"
             style={{ pointerEvents: 'none' }}
           >
-            {person.spouseBanner}
+            {banner.text}
           </text>
         </g>
       )}
 
-      {/* Name Line 1 (FirstName) */}
-      <text
-        x={px + pw / 2}
-        y={person.spouseBanner ? py + 33 : py + 19}
-        textAnchor="middle"
-        fontSize="12.0"
-        fontWeight="bold"
-        fill={theme.nameColor}
-        style={{ pointerEvents: 'none' }}
-      >
-        {person.firstName}
-      </text>
-
-      {/* Name Line 2 (LastName) */}
-      {person.lastName && (
-        <text
-          x={px + pw / 2}
-          y={person.spouseBanner ? py + 47 : py + 33}
-          textAnchor="middle"
-          fontSize="12.0"
-          fontWeight="bold"
-          fill={theme.nameColor}
-          style={{ pointerEvents: 'none' }}
-        >
-          {person.lastName}
-        </text>
-      )}
-
-      {/* Maiden Name / Alias */}
-      {person.maidenName && (
-        <text
-          x={px + pw / 2}
-          y={person.spouseBanner ? py + 61 : (person.lastName ? py + 47 : py + 33)}
-          textAnchor="middle"
-          fontSize="12.0"
-          fontWeight="bold"
-          fill={theme.nameColor}
-          style={{ pointerEvents: 'none' }}
-        >
-          {person.maidenName}
-        </text>
-      )}
-
-      {/* Dates */}
-      {dateStr && (
-        <text
-          x={px + pw / 2}
-          y={py + (person.spouseBanner ? (person.maidenName ? 75.6 : 61.3) : (person.maidenName ? 61.3 : 47.6))}
-          textAnchor="middle"
-          fontSize="11.0"
-          fill={theme.textColor}
-          style={{ pointerEvents: 'none' }}
-        >
-          {dateStr}
-        </text>
-      )}
-
-      {/* Location */}
-      {person.location && (
-        <text
-          x={px + pw / 2}
-          y={py + (person.spouseBanner ? (person.maidenName ? 89 : 74) : (person.maidenName ? 74 : 61.3))}
-          textAnchor="middle"
-          fontSize="9.2"
-          fontStyle="italic"
-          fill={theme.textColor}
-          style={{ pointerEvents: 'none' }}
-        >
-          {person.location}
-        </text>
-      )}
-
-      {/* Notes lines */}
-      {person.notes && person.notes.length > 0 && (
-        <g style={{ pointerEvents: 'none' }}>
-          {person.notes.map((note, idx) => {
-            const startY = py + (person.spouseBanner ? (person.maidenName ? 101 : 86) : (person.maidenName ? 86 : 73));
-            return (
-              <text
-                key={idx}
-                x={px + 7}
-                y={startY + idx * 11.6}
-                fontSize="9.2"
-                fill={theme.textColor}
-              >
-                {note}
-              </text>
-            );
-          })}
-        </g>
-      )}
+      {/* Rendered Text Lines (Dynamically Stacked & Fitted) */}
+      <g style={{ pointerEvents: 'none' }}>
+        {lines.map((line) => (
+          <text
+            key={line.id}
+            x={line.x}
+            y={line.y}
+            textAnchor={line.textAnchor}
+            fontSize={line.fontSize}
+            fontWeight={line.fontWeight}
+            fontStyle={line.fontStyle}
+            fill={line.fill}
+            textLength={line.textLength}
+            lengthAdjust={line.lengthAdjust}
+          >
+            {line.text}
+          </text>
+        ))}
+      </g>
 
       {/* Hover Action Triggers */}
       {isHovered && (
@@ -265,3 +172,4 @@ export const PersonCard: React.FC<PersonCardProps> = ({
     </g>
   );
 };
+

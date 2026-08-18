@@ -431,7 +431,7 @@ export const translations = {
     exportModal: {
       title: 'Export Family Tree',
       description: 'Choose the file format you want. All formats preserve the high-quality A3 print proportions and original design.',
-      htmlTitle: 'HTML (As Sample)',
+      htmlTitle: 'HTML',
       htmlDesc: 'A standalone .html file with A3 print settings (like 3-Tamosius.html).',
       svgTitle: 'Vector SVG',
       svgDesc: 'A vector file suitable for printing, illustration, and publishing.',

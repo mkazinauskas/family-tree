@@ -13,13 +13,16 @@ import {
   Sparkles,
   Sliders,
   Globe,
-  History
+  History,
+  FolderOpen
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { LANGUAGES, Language } from '../i18n/translations';
 
 interface HeaderProps {
   treeTitle: string;
+  projectName: string;
+  onOpenProjectExplorer: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   canUndo: boolean;
@@ -40,6 +43,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   treeTitle,
+  projectName,
+  onOpenProjectExplorer,
   searchQuery,
   onSearchChange,
   canUndo,
@@ -87,6 +92,18 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="brand-text">
           <span className="brand-title">{t('header.brandTitle')}</span>
           <span className="brand-badge">{t('header.brandBadge')}</span>
+        </div>
+
+        {/* Project Switcher Button */}
+        <div
+          className="tree-title-pill"
+          onClick={onOpenProjectExplorer}
+          title={t('header.projectsTooltip')}
+        >
+          <FolderOpen size={14} className="text-sky-400" />
+          <span className="truncate" style={{ maxWidth: '180px' }}>
+            {projectName || t('header.projectsFallback')}
+          </span>
         </div>
 
         {/* Tree Title Badge Button */}

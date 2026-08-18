@@ -8,26 +8,33 @@ Family Tree Studio is a modern, responsive web application built with **React**,
 
 ## ✨ Features
 
+- **Multi-Project Support**:
+  - Create, rename, duplicate, and delete unlimited family tree projects.
+  - Project explorer for switching between trees, each with its own saved history.
 - **Interactive Dynamic Canvas**:
-  - Smooth pan, drag, and zoom navigation with zoom controls and auto-fit.
-  - Multi-generational relationship lines and family grouping.
-  - Generational level indicator badges and visual depth cues.
+  - Smooth pan, drag, and zoom navigation with zoom controls, minimap, and auto-fit.
+  - Multi-generational relationship and marriage connector lines, extra links, and section grouping.
 - **Rich Biographical Profiles**:
   - Complete biographical data: birth & death dates/places, occupation, notes, tags, and portrait photos.
-  - Living vs. deceased status indicators.
+  - Living vs. deceased status indicators and per-person card color styling.
 - **Effortless Relationship Management**:
   - Add parents, spouses, partners, children, and siblings with automatic bidirectional connection linking.
+- **Undo/Redo History**:
+  - Full action history per project with a browsable history sidebar and keyboard shortcuts (`Ctrl/Cmd+Z`, `Ctrl/Cmd+Shift+Z`/`Y`).
+  - History and project data are persisted to `localStorage` automatically.
 - **Tree Analytics & Insights**:
   - Instant demographic stats: total persons, generations depth, gender breakdown, average lifespan, and oldest ancestors.
-- **Curated Starter Templates & Samples**:
-  - Preloaded historical lineage datasets and starter templates for quick testing.
+- **Curated Starter Templates**:
+  - Blank canvas, 4-generation, 5-generation, and preloaded historical lineage templates (in Lithuanian and English).
 - **Search & Outliner Sidebar**:
   - Real-time search by name, birthplace, or occupation.
   - Collapsible family branch explorer.
-- **Themes & Visual Customization**:
-  - Switch between curated aesthetic color themes (Heritage Gold, Royal Blue, Forest Emerald, Vintage Parchment, and Dark Mode).
+- **Internationalization**:
+  - Full UI available in Lithuanian and English, with automatic language detection and manual override.
+- **Customizable Tree Metadata**:
+  - Editable title/subtitle, legend, footnotes, and section styling per tree.
 - **Import & Export**:
-  - Export tree visualizations to **PNG** and **SVG**.
+  - Export tree visualizations to standalone **HTML** and **SVG**.
   - Backup and restore tree data with structured **JSON** import/export.
 
 ---
@@ -82,31 +89,34 @@ In the project directory, you can run:
 
 ```text
 family-tree/
-├── public/                # Static assets (favicons, icons)
 ├── src/
-│   ├── components/        # React UI components
+│   ├── components/
+│   │   ├── Canvas/                 # Interactive tree canvas: pan/zoom, layers, minimap, toolbar
+│   │   ├── PersonInspector/        # Person details & edit tabs (general, marriages, notes, style)
+│   │   ├── TreeMetadataModal/      # Tree settings tabs (meta, legend, footnotes, sections)
 │   │   ├── AddRelativeModal.tsx    # Modal to attach parents/children/spouses
 │   │   ├── AnalyticsModal.tsx      # Demographic & lineage statistics
-│   │   ├── Canvas.tsx              # Interactive tree canvas & SVG links
-│   │   ├── ExportModal.tsx         # PNG, SVG, JSON export dialog
+│   │   ├── ExportModal.tsx         # HTML, SVG, JSON export dialog
 │   │   ├── Header.tsx              # App navigation & main action toolbar
+│   │   ├── HistorySidebar.tsx      # Browsable undo/redo action history
+│   │   ├── NewProjectModal.tsx     # Create a new project from a template or blank tree
 │   │   ├── OutlinerSidebar.tsx     # Tree search & hierarchy branch list
 │   │   ├── PersonCard.tsx          # Individual node card rendering
-│   │   ├── PersonInspector.tsx     # Person details & edit sidebar/modal
-│   │   ├── TemplatePickerModal.tsx # Pre-made lineage templates
-│   │   └── TreeMetadataModal.tsx   # Tree settings, themes & metadata
-│   ├── data/              # Default datasets and template lineages
-│   │   ├── tamosiusTreeData.ts
-│   │   └── templates.ts
-│   ├── engine/            # Layout calculation and lineage graph algorithms
-│   ├── types/             # TypeScript type definitions for persons & trees
-│   ├── App.tsx            # Main application root state & layout
-│   ├── index.css          # Design system, CSS variables, and layout styles
-│   └── main.tsx           # React DOM entry point
-├── index.html             # Application HTML shell
-├── package.json           # Project dependencies and npm scripts
-├── tsconfig.json          # TypeScript compiler configuration
-└── vite.config.ts         # Vite build configuration
+│   │   ├── ProjectExplorerModal.tsx# Multi-project switcher, rename, duplicate, delete
+│   │   └── TreeWorkspace.tsx       # Main workspace: wires canvas, sidebars, and modals together
+│   ├── data/
+│   │   └── templates/              # Starter templates (blank, 4-gen, 5-gen, historical lineages)
+│   ├── engine/                     # Layout calculation, theming, SVG/HTML export, paper formats
+│   ├── hooks/                      # Project persistence, undo/redo history, keyboard shortcuts
+│   ├── i18n/                       # Lithuanian/English translations & language context
+│   ├── types/                      # TypeScript type definitions for persons & trees
+│   ├── App.tsx                     # Main application root state & layout
+│   ├── index.css                   # Design system, CSS variables, and layout styles
+│   └── main.tsx                    # React DOM entry point
+├── index.html                      # Application HTML shell
+├── package.json                    # Project dependencies and npm scripts
+├── tsconfig.json                   # TypeScript compiler configuration
+└── vite.config.ts                  # Vite build configuration
 ```
 
 ---

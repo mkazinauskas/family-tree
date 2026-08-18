@@ -140,13 +140,16 @@ export const Canvas: React.FC<CanvasProps> = ({
     };
   }, []);
 
-  // Mouse pan handlers
+  // Mouse pan handlers. Pan on any left-click drag that doesn't start on a person card
+  // (clicking the page background rect inside the SVG used to fail the old strict
+  // target-equality check, so dragging the visible sheet did nothing).
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.target === containerRef.current || (e.target as HTMLElement).tagName === 'svg' || (e.target as HTMLElement).classList.contains('sheet-canvas') || (e.target as HTMLElement).classList.contains('canvas-viewport')) {
-      setIsPanning(true);
-      setStartPan({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-      onSelectPerson(null);
-    }
+    if (e.button !== 0) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('.svg-person-card')) return;
+    setIsPanning(true);
+    setStartPan({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    onSelectPerson(null);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {

@@ -15,7 +15,7 @@ import {
   Globe
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
-import { LANGUAGES } from '../i18n/translations';
+import { LANGUAGES, Language } from '../i18n/translations';
 
 interface HeaderProps {
   treeTitle: string;
@@ -166,25 +166,41 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Right Actions */}
       <div className="header-actions">
         {/* Language Switcher */}
-        <div className="icon-btn" title={t('header.languageTooltip')} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'default', padding: '0 4px' }}>
+        <div
+          className="icon-btn"
+          title={t('header.languageTooltip')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            cursor: 'default',
+            width: 'auto',
+            height: '34px',
+            padding: '0 8px',
+          }}
+        >
           <Globe size={14} className="text-muted" />
-          {LANGUAGES.map((l) => (
-            <button
-              key={l.code}
-              className="btn-ghost btn-sm"
-              onClick={() => setLang(l.code)}
-              style={{
-                padding: '2px 6px',
-                fontSize: '11px',
-                fontWeight: 700,
-                borderRadius: '4px',
-                color: lang === l.code ? '#38bdf8' : 'var(--text-muted)',
-                background: lang === l.code ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
-              }}
-            >
-              {l.label}
-            </button>
-          ))}
+          <select
+            className="form-select"
+            value={lang}
+            onChange={(e) => setLang(e.target.value as Language)}
+            title={t('header.languageTooltip')}
+            style={{
+              width: 'auto',
+              padding: '4px 20px 4px 6px',
+              fontSize: '11px',
+              fontWeight: 700,
+              height: '26px',
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+            }}
+          >
+            {LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Templates Picker */}

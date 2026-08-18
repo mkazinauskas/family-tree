@@ -7,18 +7,15 @@ export interface HistoryEntry {
   tree: FamilyTreeData;
 }
 
-interface HistoryState {
+export interface HistoryState {
   entries: HistoryEntry[];
   index: number;
 }
 
 const MAX_HISTORY_ENTRIES = 100;
 
-export function useTreeHistory(initialLabel: string, loadInitialTree: () => FamilyTreeData) {
-  const [historyState, setHistoryState] = useState<HistoryState>(() => ({
-    entries: [{ label: initialLabel, timestamp: new Date().toISOString(), tree: loadInitialTree() }],
-    index: 0,
-  }));
+export function useTreeHistory(loadInitialState: () => HistoryState) {
+  const [historyState, setHistoryState] = useState<HistoryState>(loadInitialState);
   const { entries: historyEntries, index: historyIndex } = historyState;
 
   const tree = historyEntries[historyIndex].tree;

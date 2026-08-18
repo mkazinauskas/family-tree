@@ -12,23 +12,39 @@ import { TemplatePickerModal } from './components/TemplatePickerModal';
 import { OutlinerSidebar } from './components/OutlinerSidebar';
 import { HistorySidebar } from './components/HistorySidebar';
 import { useTranslation } from './i18n/LanguageContext';
-import { useTreeHistory } from './hooks/useTreeHistory';
+import { useTreeHistory, HistoryState } from './hooks/useTreeHistory';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useTreeActions } from './hooks/useTreeActions';
 import { FamilyTreeData } from './types/familyTree';
 
 const LOCAL_STORAGE_KEY = 'family_tree_current_data_v1';
 
-function loadInitialTree(): FamilyTreeData {
+function isHistoryState(value: unknown): value is HistoryState {
+  return (
+    !!value &&
+    typeof value === 'object' &&
+    Array.isArray((value as HistoryState).entries) &&
+    (value as HistoryState).entries.length > 0 &&
+    typeof (value as HistoryState).index === 'number'
+  );
+}
+
+function loadInitialHistoryState(initialLabel: string): HistoryState {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (isHistoryState(parsed)) {
+        const index = Math.min(Math.max(parsed.index, 0), parsed.entries.length - 1);
+        return { entries: parsed.entries, index };
+      }
+      // Legacy format: a bare FamilyTreeData object with no history.
+      return { entries: [{ label: initialLabel, timestamp: new Date().toISOString(), tree: parsed as FamilyTreeData }], index: 0 };
     }
   } catch (e) {
-    console.error('Failed to parse saved tree', e);
+    console.error('Failed to parse saved tree history', e);
   }
-  return tamosiusGaidysTemplate.data;
+  return { entries: [{ label: initialLabel, timestamp: new Date().toISOString(), tree: tamosiusGaidysTemplate.data }], index: 0 };
 }
 
 export const App: React.FC = () => {
@@ -45,7 +61,7 @@ export const App: React.FC = () => {
     handleJumpToHistory,
     canUndo,
     canRedo,
-  } = useTreeHistory(t('history.actionInitial'), loadInitialTree);
+  } = useTreeHistory(() => loadInitialHistoryState(t('history.actionInitial')));
 
   // Selected person
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
@@ -66,11 +82,11 @@ export const App: React.FC = () => {
   // Save to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tree));
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ entries: historyEntries, index: historyIndex }));
     } catch (e) {
-      console.error('Failed to save tree to localStorage', e);
+      console.error('Failed to save tree history to localStorage', e);
     }
-  }, [tree]);
+  }, [historyEntries, historyIndex]);
 
   useKeyboardShortcuts({
     onUndo: handleUndo,

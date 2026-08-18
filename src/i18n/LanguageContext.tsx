@@ -25,7 +25,7 @@ function detectInitialLanguage(): Language {
   if (typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('lt')) {
     return 'lt';
   }
-  return 'lt';
+  return 'en';
 }
 
 interface LanguageContextValue {
@@ -55,7 +55,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const value = getNested(dict, path);
       if (typeof value === 'string') return interpolate(value, vars);
 
-      const fallback = getNested(translations.lt, path);
+      const fallback = getNested(translations.en, path);
       if (typeof fallback === 'string') return interpolate(fallback, vars);
 
       return key;

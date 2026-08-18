@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Person } from './types/familyTree';
-import { TAMOSIUS_GAIDYS_DATA } from './data/tamosiusTreeData';
+import tamosiusGaidysTemplate from './data/templates/tamosius-gaidys';
 import { Header } from './components/Header';
 import { Canvas } from './components/Canvas';
 import { PersonInspector } from './components/PersonInspector';
@@ -28,7 +28,7 @@ function loadInitialTree(): FamilyTreeData {
   } catch (e) {
     console.error('Failed to parse saved tree', e);
   }
-  return TAMOSIUS_GAIDYS_DATA;
+  return tamosiusGaidysTemplate.data;
 }
 
 export const App: React.FC = () => {

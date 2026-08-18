@@ -267,6 +267,7 @@ html, body {
   background-size: 24px 24px;
   cursor: grab;
   user-select: none;
+  touch-action: none;
 }
 
 .canvas-viewport.panning {

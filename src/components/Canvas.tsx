@@ -84,21 +84,61 @@ export const Canvas: React.FC<CanvasProps> = ({
     setScale((prev) => Math.min(Math.max(prev + delta, 0.2), 2.5));
   };
 
-  // Wheel listener for smooth pan and zoom
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    if (e.ctrlKey || e.metaKey) {
-      // Zoom
-      const zoomFactor = -e.deltaY * 0.0015;
-      setScale((prev) => Math.min(Math.max(prev + zoomFactor, 0.2), 2.5));
-    } else {
-      // Pan
-      setPan((prev) => ({
-        x: prev.x - e.deltaX * 0.8,
-        y: prev.y - e.deltaY * 0.8,
-      }));
-    }
-  };
+  // Trackpad pinch (Chrome/Firefox send this as wheel + ctrlKey) and ctrl/cmd+scroll zoom,
+  // plain scroll pans. Registered natively with { passive: false } because React's onWheel
+  // prop is passive by default, so calling preventDefault() there does not stop the browser's
+  // own pinch-to-zoom on the page.
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.ctrlKey || e.metaKey) {
+        const zoomFactor = -e.deltaY * 0.0015;
+        setScale((prev) => Math.min(Math.max(prev + zoomFactor, 0.2), 2.5));
+      } else {
+        setPan((prev) => ({
+          x: prev.x - e.deltaX * 0.8,
+          y: prev.y - e.deltaY * 0.8,
+        }));
+      }
+    };
+
+    node.addEventListener('wheel', onWheel, { passive: false });
+    return () => node.removeEventListener('wheel', onWheel);
+  }, []);
+
+  // Safari trackpad pinch fires gesturestart/gesturechange instead of ctrl+wheel.
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+
+    let startScale = 1;
+
+    const onGestureStart = (e: any) => {
+      e.preventDefault();
+      startScale = 1;
+    };
+    const onGestureChange = (e: any) => {
+      e.preventDefault();
+      const delta = e.scale - startScale;
+      startScale = e.scale;
+      setScale((prev) => Math.min(Math.max(prev + delta, 0.2), 2.5));
+    };
+    const onGestureEnd = (e: any) => {
+      e.preventDefault();
+    };
+
+    node.addEventListener('gesturestart', onGestureStart as EventListener, { passive: false });
+    node.addEventListener('gesturechange', onGestureChange as EventListener, { passive: false });
+    node.addEventListener('gestureend', onGestureEnd as EventListener, { passive: false });
+    return () => {
+      node.removeEventListener('gesturestart', onGestureStart as EventListener);
+      node.removeEventListener('gesturechange', onGestureChange as EventListener);
+      node.removeEventListener('gestureend', onGestureEnd as EventListener);
+    };
+  }, []);
 
   // Mouse pan handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -145,7 +185,6 @@ export const Canvas: React.FC<CanvasProps> = ({
     <div
       ref={containerRef}
       className={`canvas-viewport ${isPanning ? 'panning' : ''}`}
-      onWheel={handleWheel}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

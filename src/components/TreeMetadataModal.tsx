@@ -30,9 +30,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
   const [currentSections, setCurrentSections] = useState<TreeSection[]>([...sections]);
   const [currentLegend, setCurrentLegend] = useState<LegendItem[]>([...legend]);
   const [currentFootnotes, setCurrentFootnotes] = useState<FootnoteItem[]>([...footnotes]);
-  const [expandedSectionId, setExpandedSectionId] = useState<string | null>(
-    currentSections[0]?.id || null
-  );
+  const [expandedSectionId, setExpandedSectionId] = useState<string | null>(null);
 
   const handleAddSection = () => {
     const lastSection = currentSections[currentSections.length - 1];

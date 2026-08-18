@@ -1,130 +1,47 @@
 # 🌳 Family Tree Studio
 
-> **High-Precision Genealogy Editor & Interactive Family Lineage Visualizer**
+**A fast, beautiful genealogy editor for the web.** Build, visualize, and export multi-generational family trees on an interactive drag-and-zoom canvas — no account, no backend, just open and start mapping your family.
 
-Family Tree Studio is a modern, responsive web application built with **React**, **TypeScript**, and **Vite** that lets you create, edit, visualize, analyze, and export complex genealogical family trees with an intuitive, dynamic canvas interface.
-
----
-
-## ✨ Features
-
-- **Multi-Project Support**:
-  - Create, rename, duplicate, and delete unlimited family tree projects.
-  - Project explorer for switching between trees, each with its own saved history.
-- **Interactive Dynamic Canvas**:
-  - Smooth pan, drag, and zoom navigation with zoom controls, minimap, and auto-fit.
-  - Multi-generational relationship and marriage connector lines, extra links, and section grouping.
-- **Rich Biographical Profiles**:
-  - Complete biographical data: birth & death dates/places, occupation, notes, tags, and portrait photos.
-  - Living vs. deceased status indicators and per-person card color styling.
-- **Effortless Relationship Management**:
-  - Add parents, spouses, partners, children, and siblings with automatic bidirectional connection linking.
-- **Undo/Redo History**:
-  - Full action history per project with a browsable history sidebar and keyboard shortcuts (`Ctrl/Cmd+Z`, `Ctrl/Cmd+Shift+Z`/`Y`).
-  - History and project data are persisted to `localStorage` automatically.
-- **Tree Analytics & Insights**:
-  - Instant demographic stats: total persons, generations depth, gender breakdown, average lifespan, and oldest ancestors.
-- **Curated Starter Templates**:
-  - Blank canvas, 4-generation, 5-generation, and preloaded historical lineage templates (in Lithuanian and English).
-- **Search & Outliner Sidebar**:
-  - Real-time search by name, birthplace, or occupation.
-  - Collapsible family branch explorer.
-- **Internationalization**:
-  - Full UI available in Lithuanian and English, with automatic language detection and manual override.
-- **Customizable Tree Metadata**:
-  - Editable title/subtitle, legend, footnotes, and section styling per tree.
-- **Import & Export**:
-  - Export tree visualizations to standalone **HTML** and **SVG**.
-  - Backup and restore tree data with structured **JSON** import/export.
+Built with React, TypeScript, and Vite.
 
 ---
 
-## 🚀 Quick Start — How to Run
+## ✨ Highlights
 
-### Prerequisites
-
-Ensure you have one of the following installed on your machine:
-- **Node.js** (v18.0 or higher recommended) & **npm**
-- Or **Bun** / **pnpm** / **Yarn**
-
----
-
-### Installation & Setup
-
-1. **Clone or navigate to the project directory:**
-   ```bash
-   cd /path/to/family-tree
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-   *(Or if you use Bun: `bun install`, pnpm: `pnpm install`)*
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-   *(Or with Bun: `bun dev`)*
-
-4. **Open the application:**
-   Navigate to the local URL displayed in your terminal (usually [http://localhost:5173](http://localhost:5173)).
+- 🖱️ **Interactive canvas** — pan, zoom, minimap, and auto-layout for large trees
+- 👪 **Rich profiles** — dates, places, occupation, photos, notes, and living/deceased status
+- 🔗 **Smart relationships** — link parents, spouses, and children with automatic connectors
+- ↩️ **Full undo/redo** — every edit is tracked, browsable, and autosaved locally
+- 📁 **Multi-project** — manage several trees, each with its own history
+- 📊 **Instant analytics** — generation depth, gender breakdown, lifespans, oldest ancestors
+- 🌍 **Lithuanian & English** UI
+- 📤 **Export** to standalone HTML, SVG, or JSON
 
 ---
 
-## 🛠️ Available Scripts
+## 🚀 Getting Started
 
-In the project directory, you can run:
-
-| Command | Description |
-| :--- | :--- |
-| `npm run dev` | Starts the Vite local development server with Hot Module Replacement (HMR). |
-| `npm run build` | Runs TypeScript type checking (`tsc`) and builds the optimized production bundle to `dist/`. |
-| `npm run preview` | Locally serves the production build from `dist/` to preview it before deployment. |
-
----
-
-## 📁 Project Structure
-
-```text
-family-tree/
-├── src/
-│   ├── components/
-│   │   ├── Canvas/                 # Interactive tree canvas: pan/zoom, layers, minimap, toolbar
-│   │   ├── PersonInspector/        # Person details & edit tabs (general, marriages, notes, style)
-│   │   ├── TreeMetadataModal/      # Tree settings tabs (meta, legend, footnotes, sections)
-│   │   ├── AddRelativeModal.tsx    # Modal to attach parents/children/spouses
-│   │   ├── AnalyticsModal.tsx      # Demographic & lineage statistics
-│   │   ├── ExportModal.tsx         # HTML, SVG, JSON export dialog
-│   │   ├── Header.tsx              # App navigation & main action toolbar
-│   │   ├── HistorySidebar.tsx      # Browsable undo/redo action history
-│   │   ├── NewProjectModal.tsx     # Create a new project from a template or blank tree
-│   │   ├── OutlinerSidebar.tsx     # Tree search & hierarchy branch list
-│   │   ├── PersonCard.tsx          # Individual node card rendering
-│   │   ├── ProjectExplorerModal.tsx# Multi-project switcher, rename, duplicate, delete
-│   │   └── TreeWorkspace.tsx       # Main workspace: wires canvas, sidebars, and modals together
-│   ├── data/
-│   │   └── templates/              # Starter templates (blank, 4-gen, 5-gen, historical lineages)
-│   ├── engine/                     # Layout calculation, theming, SVG/HTML export, paper formats
-│   ├── hooks/                      # Project persistence, undo/redo history, keyboard shortcuts
-│   ├── i18n/                       # Lithuanian/English translations & language context
-│   ├── types/                      # TypeScript type definitions for persons & trees
-│   ├── App.tsx                     # Main application root state & layout
-│   ├── index.css                   # Design system, CSS variables, and layout styles
-│   └── main.tsx                    # React DOM entry point
-├── index.html                      # Application HTML shell
-├── package.json                    # Project dependencies and npm scripts
-├── tsconfig.json                   # TypeScript compiler configuration
-└── vite.config.ts                  # Vite build configuration
+```bash
+npm install
+npm run dev
 ```
+
+Open [http://localhost:5173](http://localhost:5173) and start building your tree.
+
+| Command | What it does |
+| :--- | :--- |
+| `npm run dev` | Start the dev server with hot reload |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Preview the production build locally |
 
 ---
 
 ## 🧰 Tech Stack
 
-- **Framework**: [React 18](https://react.dev/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Visuals & Effects**: Canvas Confetti, Vanilla CSS variables & responsive layout
+React 18 · TypeScript · Vite · Lucide Icons
+
+---
+
+## 📄 License
+
+No license specified yet — all rights reserved by default.

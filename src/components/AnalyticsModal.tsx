@@ -1,6 +1,7 @@
 import React from 'react';
 import { FamilyTreeData } from '../types/familyTree';
 import { X, BarChart3, Users, Heart, Calendar, MapPin, Award } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface AnalyticsModalProps {
   tree: FamilyTreeData;
@@ -74,6 +75,7 @@ export function computeTreeStats(tree: FamilyTreeData) {
 }
 
 export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose }) => {
+  const { t } = useTranslation();
   const stats = computeTreeStats(tree);
 
   return (
@@ -83,7 +85,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
         <div className="modal-header">
           <div className="modal-title">
             <BarChart3 size={20} className="text-sky-400" />
-            <span>Genealogijos Analizė ir Statistika</span>
+            <span>{t('analyticsModal.title')}</span>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={16} />
@@ -104,7 +106,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '12px' }}>
                 <Users size={14} className="text-sky-400" />
-                <span>Iš viso asmenų</span>
+                <span>{t('analyticsModal.totalPeople')}</span>
               </div>
               <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '4px' }}>
                 {stats.totalPeople}
@@ -121,10 +123,10 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '12px' }}>
                 <Award size={14} className="text-amber-400" />
-                <span>Kartų gylis</span>
+                <span>{t('analyticsModal.generationDepth')}</span>
               </div>
               <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '4px' }}>
-                {stats.maxGen} kartos
+                {t('analyticsModal.generationsSuffix', { count: stats.maxGen })}
               </div>
             </div>
 
@@ -138,7 +140,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '12px' }}>
                 <Heart size={14} className="text-rose-400" />
-                <span>Santuokų skaičius</span>
+                <span>{t('analyticsModal.marriagesCount')}</span>
               </div>
               <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '4px' }}>
                 {stats.totalMarriages}
@@ -155,10 +157,10 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '12px' }}>
                 <Calendar size={14} className="text-emerald-400" />
-                <span>Vid. amžius</span>
+                <span>{t('analyticsModal.avgAge')}</span>
               </div>
               <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '4px' }}>
-                {stats.avgLifespan} {stats.avgLifespan !== '—' ? 'm.' : ''}
+                {stats.avgLifespan} {stats.avgLifespan !== '—' ? t('analyticsModal.yearsAbbr') : ''}
               </div>
             </div>
           </div>
@@ -173,14 +175,14 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px', fontWeight: 600 }}>
-              <span>Lyties pasiskirstymas</span>
+              <span>{t('analyticsModal.genderBalance')}</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>
-                Vyrai: {stats.males} ({Math.round((stats.males / (stats.totalPeople || 1)) * 100)}%) · Moterys: {stats.females} ({Math.round((stats.females / (stats.totalPeople || 1)) * 100)}%)
+                {t('analyticsModal.men')}: {stats.males} ({Math.round((stats.males / (stats.totalPeople || 1)) * 100)}%) · {t('analyticsModal.women')}: {stats.females} ({Math.round((stats.females / (stats.totalPeople || 1)) * 100)}%)
               </span>
             </div>
             <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.08)', borderRadius: '5px', overflow: 'hidden', display: 'flex' }}>
-              <div style={{ width: `${(stats.males / (stats.totalPeople || 1)) * 100}%`, background: '#38bdf8' }} title="Vyrai" />
-              <div style={{ width: `${(stats.females / (stats.totalPeople || 1)) * 100}%`, background: '#f43f5e' }} title="Moterys" />
+              <div style={{ width: `${(stats.males / (stats.totalPeople || 1)) * 100}%`, background: '#38bdf8' }} title={t('analyticsModal.men')} />
+              <div style={{ width: `${(stats.females / (stats.totalPeople || 1)) * 100}%`, background: '#f43f5e' }} title={t('analyticsModal.women')} />
             </div>
           </div>
 
@@ -197,21 +199,21 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
             }}
           >
             <div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Seniausias įrašas</div>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{stats.earliestYear} m.</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('analyticsModal.oldestRecord')}</div>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{stats.earliestYear} {t('analyticsModal.yearSuffix')}</div>
             </div>
             <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
-              Chronologinis laikotarpis
+              {t('analyticsModal.chronologicalRange')}
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Naujausias įrašas</div>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{stats.latestYear} m.</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('analyticsModal.newestRecord')}</div>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{stats.latestYear} {t('analyticsModal.yearSuffix')}</div>
             </div>
           </div>
 
           {/* Surnames Breakdown */}
           <div className="form-group">
-            <label className="form-label">Dažniausios Pavardės Medyje</label>
+            <label className="form-label">{t('analyticsModal.topSurnames')}</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {stats.sortedSurnames.slice(0, 15).map(([surname, count]) => (
                 <div
@@ -240,7 +242,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
         {/* Footer */}
         <div className="modal-footer">
           <button className="btn btn-primary" onClick={onClose}>
-            Uždaryti
+            {t('analyticsModal.close')}
           </button>
         </div>
       </div>

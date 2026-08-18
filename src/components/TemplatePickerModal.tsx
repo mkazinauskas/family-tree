@@ -3,6 +3,7 @@ import { FamilyTreeData } from '../types/familyTree';
 import { TEMPLATES } from '../data/templates';
 import { parseFamilyTreeHtml } from '../engine/htmlParser';
 import { X, Sparkles, Upload, FileCode, Check } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface TemplatePickerModalProps {
   currentTreeId: string;
@@ -15,6 +16,7 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
   onSelectTemplate,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +38,7 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
           onSelectTemplate(parsed);
         }
       } catch (err) {
-        alert('Klaida įkeliant failą: ' + (err as Error).message);
+        alert(t('templatePickerModal.importError') + (err as Error).message);
       }
     };
     reader.readAsText(file);
@@ -49,7 +51,7 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
         <div className="modal-header">
           <div className="modal-title">
             <Sparkles size={20} className="text-amber-400" />
-            <span>Genealogijos Šablonai ir Importas</span>
+            <span>{t('templatePickerModal.title')}</span>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={16} />
@@ -60,7 +62,7 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
         <div className="modal-body">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-              Pasirinkite paruoštą šabloną arba įkelkite savo HTML / SVG / JSON failą:
+              {t('templatePickerModal.description')}
             </span>
 
             <button
@@ -69,7 +71,7 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
               onClick={() => fileInputRef.current?.click()}
             >
               <Upload size={14} />
-              <span>Importuoti HTML / JSON</span>
+              <span>{t('templatePickerModal.importButton')}</span>
             </button>
             <input
               ref={fileInputRef}
@@ -109,7 +111,7 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
                       </span>
                       {isSelected && (
                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>
-                          <Check size={14} /> Aktyvus
+                          <Check size={14} /> {t('templatePickerModal.active')}
                         </span>
                       )}
                     </div>
@@ -119,11 +121,11 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', marginTop: '12px', fontSize: '11px', color: 'var(--text-secondary)' }}>
-                    <span>👤 {tpl.data.people.length} asmenys</span>
+                    <span>{t('templatePickerModal.peopleCount', { count: tpl.data.people.length })}</span>
                     <span>·</span>
-                    <span>📑 {tpl.data.sections.length} sekcijos</span>
+                    <span>{t('templatePickerModal.sectionsCount', { count: tpl.data.sections.length })}</span>
                     <span>·</span>
-                    <span>💍 {tpl.data.marriages.length} santuokos</span>
+                    <span>{t('templatePickerModal.marriagesCount', { count: tpl.data.marriages.length })}</span>
                   </div>
                 </div>
               );
@@ -134,7 +136,7 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
         {/* Footer */}
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>
-            Uždaryti
+            {t('templatePickerModal.close')}
           </button>
         </div>
       </div>

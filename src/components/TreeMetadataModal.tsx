@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TreeMetadata, TreeSection, GenerationBand, LegendItem, FootnoteItem } from '../types/familyTree';
 import { X, Sliders, Plus, Trash2, Layers, BookOpen, Bookmark, ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface TreeMetadataModalProps {
   metadata: TreeMetadata;
@@ -24,6 +25,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
   onSave,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'meta' | 'sections' | 'legend' | 'footnotes'>('meta');
 
   const [currentMeta, setCurrentMeta] = useState<TreeMetadata>({ ...metadata });
@@ -37,7 +39,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
     const newY = lastSection ? lastSection.y + (lastSection.height || 200) : 82;
     const newSection: TreeSection = {
       id: 'sec-' + Date.now(),
-      title: 'NAUJA SEKCIJA',
+      title: t('treeMetadataModal.newSectionDefault'),
       y: newY,
       height: 200,
       generationBands: [],
@@ -73,7 +75,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
 
     const newBand: GenerationBand = {
       generation: nextGen,
-      label: `${nextGen} karta`,
+      label: t('treeMetadataModal.newGenerationLabelDefault', { gen: nextGen }),
       labelX: 26,
       labelY: bandTop + bandHeight / 2,
       bgY: bandTop,
@@ -142,7 +144,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
   const handleAddLegend = () => {
     const newLeg: LegendItem = {
       id: 'leg-' + Date.now(),
-      label: 'Nauja šaka',
+      label: t('treeMetadataModal.newLegendDefault'),
       fill: '#EFF7F4',
       stroke: '#7FB3A5',
     };
@@ -176,7 +178,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
         <div className="modal-header">
           <div className="modal-title">
             <Sliders size={20} className="text-sky-400" />
-            <span>Medžio Antraštė, Legendos ir Išnašos</span>
+            <span>{t('treeMetadataModal.title')}</span>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={16} />
@@ -191,7 +193,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
             style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'meta' ? '2px solid #38bdf8' : 'none', padding: '10px 0', fontSize: '13px', fontWeight: 600 }}
             onClick={() => setActiveTab('meta')}
           >
-            <Bookmark size={14} /> Antraštė ir Lapas
+            <Bookmark size={14} /> {t('treeMetadataModal.tabMeta')}
           </button>
           <button
             type="button"
@@ -199,7 +201,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
             style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'sections' ? '2px solid #38bdf8' : 'none', padding: '10px 0', fontSize: '13px', fontWeight: 600 }}
             onClick={() => setActiveTab('sections')}
           >
-            <Layers size={14} /> Sekcijos & Kartos
+            <Layers size={14} /> {t('treeMetadataModal.tabSections')}
           </button>
           <button
             type="button"
@@ -207,7 +209,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
             style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'legend' ? '2px solid #38bdf8' : 'none', padding: '10px 0', fontSize: '13px', fontWeight: 600 }}
             onClick={() => setActiveTab('legend')}
           >
-            <BookOpen size={14} /> Spalvų Legenda
+            <BookOpen size={14} /> {t('treeMetadataModal.tabLegend')}
           </button>
           <button
             type="button"
@@ -215,7 +217,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
             style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'footnotes' ? '2px solid #38bdf8' : 'none', padding: '10px 0', fontSize: '13px', fontWeight: 600 }}
             onClick={() => setActiveTab('footnotes')}
           >
-            <BookOpen size={14} /> Istorinės Išnašos
+            <BookOpen size={14} /> {t('treeMetadataModal.tabFootnotes')}
           </button>
         </div>
 
@@ -226,47 +228,47 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
             {activeTab === 'meta' && (
               <>
                 <div className="form-group">
-                  <label className="form-label">Medžio Pavadinimas (H1)</label>
+                  <label className="form-label">{t('treeMetadataModal.treeTitleLabel')}</label>
                   <input
                     type="text"
                     className="form-input"
                     value={currentMeta.title}
                     onChange={(e) => setCurrentMeta({ ...currentMeta, title: e.target.value })}
-                    placeholder="TAMOŠIAUS (TOMO) GAIDŽIO (1844–1910) ŠEIMA"
+                    placeholder={t('treeMetadataModal.treeTitlePlaceholder')}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Paantraštė / Giminės aprašymas</label>
+                  <label className="form-label">{t('treeMetadataModal.subtitleLabel')}</label>
                   <input
                     type="text"
                     className="form-input"
                     value={currentMeta.subtitle}
                     onChange={(e) => setCurrentMeta({ ...currentMeta, subtitle: e.target.value })}
-                    placeholder="Gaidžių giminė · Vareikų k., Subačiaus parapija..."
+                    placeholder={t('treeMetadataModal.subtitlePlaceholder')}
                   />
                 </div>
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">Lapo numeris / Sheet Label</label>
+                    <label className="form-label">{t('treeMetadataModal.sheetNumberLabel')}</label>
                     <input
                       type="text"
                       className="form-input"
                       value={currentMeta.sheetNumber}
                       onChange={(e) => setCurrentMeta({ ...currentMeta, sheetNumber: e.target.value })}
-                      placeholder="LAPAS 3 / 3"
+                      placeholder={t('treeMetadataModal.sheetNumberPlaceholder')}
                     />
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Šrifto šeima</label>
+                    <label className="form-label">{t('treeMetadataModal.fontFamilyLabel')}</label>
                     <input
                       type="text"
                       className="form-input"
                       value={currentMeta.fontFamily}
                       onChange={(e) => setCurrentMeta({ ...currentMeta, fontFamily: e.target.value })}
-                      placeholder="'DejaVu Sans Condensed', sans-serif"
+                      placeholder={t('treeMetadataModal.fontFamilyPlaceholder')}
                     />
                   </div>
                 </div>
@@ -277,9 +279,9 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
             {activeTab === 'sections' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label className="form-label">Giminės Medžio Sekcijos ({currentSections.length})</label>
+                  <label className="form-label">{t('treeMetadataModal.sectionsLabel', { count: currentSections.length })}</label>
                   <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddSection}>
-                    <Plus size={14} /> Pridėti sekciją
+                    <Plus size={14} /> {t('treeMetadataModal.addSection')}
                   </button>
                 </div>
 
@@ -312,15 +314,15 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                           {idx + 1}.
                         </span>
                         <span style={{ fontSize: '13px', fontWeight: 600, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {sec.title || 'Bevardė sekcija'}
+                          {sec.title || t('treeMetadataModal.unnamedSection')}
                         </span>
                         <span style={{ fontSize: '11px', color: 'var(--text-muted)', flexShrink: 0 }}>
-                          {sec.generationBands.length} karta(os)
+                          {t('treeMetadataModal.generationsCountShort', { count: sec.generationBands.length })}
                         </span>
                         <button
                           type="button"
                           className="icon-btn"
-                          title="Pašalinti sekciją"
+                          title={t('treeMetadataModal.removeSection')}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleRemoveSection(sec.id);
@@ -333,7 +335,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                       {isExpanded && (
                         <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                           <div className="form-group">
-                            <label className="form-label">Sekcijos Pavadinimas</label>
+                            <label className="form-label">{t('treeMetadataModal.sectionTitleLabel')}</label>
                             <input
                               type="text"
                               className="form-input"
@@ -343,7 +345,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                           </div>
 
                           <div className="form-group">
-                            <label className="form-label">Paantraštė</label>
+                            <label className="form-label">{t('treeMetadataModal.sectionSubheadLabel')}</label>
                             <input
                               type="text"
                               className="form-input"
@@ -354,7 +356,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
 
                           <div className="form-row">
                             <div className="form-group">
-                              <label className="form-label">Y pozicija</label>
+                              <label className="form-label">{t('treeMetadataModal.yPosition')}</label>
                               <input
                                 type="number"
                                 className="form-input"
@@ -363,7 +365,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                               />
                             </div>
                             <div className="form-group">
-                              <label className="form-label">Aukštis</label>
+                              <label className="form-label">{t('treeMetadataModal.heightLabel')}</label>
                               <input
                                 type="number"
                                 className="form-input"
@@ -376,13 +378,13 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                           {/* Generation Bands */}
                           <div style={{ marginTop: '4px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                              <label className="form-label" style={{ margin: 0 }}>Kartos ({sec.generationBands.length})</label>
+                              <label className="form-label" style={{ margin: 0 }}>{t('treeMetadataModal.generationsLabel', { count: sec.generationBands.length })}</label>
                               <button
                                 type="button"
                                 className="btn btn-ghost btn-sm"
                                 onClick={() => handleAddGenerationBand(sec.id)}
                               >
-                                <Plus size={13} /> Pridėti kartą
+                                <Plus size={13} /> {t('treeMetadataModal.addGeneration')}
                               </button>
                             </div>
 
@@ -410,7 +412,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                                     <input
                                       type="number"
                                       className="form-input"
-                                      title="Kartos numeris"
+                                      title={t('treeMetadataModal.generationNumberTitle')}
                                       value={band.generation}
                                       onChange={(e) =>
                                         handleUpdateGenerationBand(
@@ -424,7 +426,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                                     <input
                                       type="text"
                                       className="form-input"
-                                      placeholder="I karta"
+                                      placeholder={t('treeMetadataModal.generationLabelPlaceholder')}
                                       value={band.label}
                                       onChange={(e) =>
                                         handleUpdateGenerationBand(sec.id, bIdx, 'label', e.target.value)
@@ -433,7 +435,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                                     <button
                                       type="button"
                                       className="icon-btn"
-                                      title="Pašalinti kartą"
+                                      title={t('treeMetadataModal.removeGeneration')}
                                       onClick={() => handleRemoveGenerationBand(sec.id, bIdx)}
                                     >
                                       <Trash2 size={13} className="text-red-400" />
@@ -449,7 +451,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                                     }}
                                   >
                                     <div>
-                                      <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Etiketės Y</label>
+                                      <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t('treeMetadataModal.labelY')}</label>
                                       <input
                                         type="number"
                                         className="form-input"
@@ -465,7 +467,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                                       />
                                     </div>
                                     <div>
-                                      <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Fono Y</label>
+                                      <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t('treeMetadataModal.bgY')}</label>
                                       <input
                                         type="number"
                                         className="form-input"
@@ -481,7 +483,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                                       />
                                     </div>
                                     <div>
-                                      <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Fono aukštis</label>
+                                      <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t('treeMetadataModal.bgHeight')}</label>
                                       <input
                                         type="number"
                                         className="form-input"
@@ -514,14 +516,14 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                                           handleUpdateGenerationBand(sec.id, bIdx, 'hasBgRect', e.target.checked)
                                         }
                                       />
-                                      Fonas
+                                      {t('treeMetadataModal.bgCheckbox')}
                                     </label>
                                   </div>
                                 </div>
                               ))}
                               {sec.generationBands.length === 0 && (
                                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', padding: '4px 0' }}>
-                                  Nėra kartų. Paspauskite „Pridėti kartą“.
+                                  {t('treeMetadataModal.noGenerations')}
                                 </div>
                               )}
                             </div>
@@ -534,7 +536,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
 
                 {currentSections.length === 0 && (
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)', padding: '8px 0' }}>
-                    Nėra sekcijų. Paspauskite „Pridėti sekciją“, kad sukurtumėte pirmąją.
+                    {t('treeMetadataModal.noSections')}
                   </div>
                 )}
               </div>
@@ -544,9 +546,9 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
             {activeTab === 'legend' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label className="form-label">Spalvų Legendos Įrašai</label>
+                  <label className="form-label">{t('treeMetadataModal.legendEntriesLabel')}</label>
                   <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddLegend}>
-                    <Plus size={14} /> Pridėti įrašą
+                    <Plus size={14} /> {t('treeMetadataModal.addLegendEntry')}
                   </button>
                 </div>
 
@@ -565,7 +567,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                       className="form-input"
                       value={leg.label}
                       onChange={(e) => handleUpdateLegend(leg.id, 'label', e.target.value)}
-                      placeholder="Pavadinimas"
+                      placeholder={t('treeMetadataModal.legendNamePlaceholder')}
                     />
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <input
@@ -574,7 +576,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                         onChange={(e) => handleUpdateLegend(leg.id, 'fill', e.target.value)}
                         style={{ width: '28px', height: '28px', border: 'none', background: 'transparent', cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Fonas</span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t('treeMetadataModal.fillLabel')}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <input
@@ -583,13 +585,13 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                         onChange={(e) => handleUpdateLegend(leg.id, 'stroke', e.target.value)}
                         style={{ width: '28px', height: '28px', border: 'none', background: 'transparent', cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Rėmelis</span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t('treeMetadataModal.strokeLabel')}</span>
                     </div>
                     <button
                       type="button"
                       className="icon-btn"
                       onClick={() => handleRemoveLegend(leg.id)}
-                      title="Pašalinti"
+                      title={t('treeMetadataModal.removeEntry')}
                     >
                       <Trash2 size={13} className="text-red-400" />
                     </button>
@@ -604,13 +606,13 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                 {/* Column 1 */}
                 <div className="form-group">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label className="form-label">Kairysis stulpelis (1 Stulpelis)</label>
+                    <label className="form-label">{t('treeMetadataModal.leftColumn')}</label>
                     <button
                       type="button"
                       className="btn btn-ghost btn-sm"
                       onClick={() => handleAddFootnote(1)}
                     >
-                      <Plus size={13} /> Pridėti išnašą
+                      <Plus size={13} /> {t('treeMetadataModal.addFootnote')}
                     </button>
                   </div>
 
@@ -623,7 +625,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                           className="form-input"
                           value={fn.text}
                           onChange={(e) => handleUpdateFootnote(fn.id, e.target.value)}
-                          placeholder="Išnašos tekstas..."
+                          placeholder={t('treeMetadataModal.footnoteTextPlaceholder')}
                         />
                         <button
                           type="button"
@@ -640,13 +642,13 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                 {/* Column 2 */}
                 <div className="form-group">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label className="form-label">Dešinysis stulpelis (2 Stulpelis)</label>
+                    <label className="form-label">{t('treeMetadataModal.rightColumn')}</label>
                     <button
                       type="button"
                       className="btn btn-ghost btn-sm"
                       onClick={() => handleAddFootnote(2)}
                     >
-                      <Plus size={13} /> Pridėti išnašą
+                      <Plus size={13} /> {t('treeMetadataModal.addFootnote')}
                     </button>
                   </div>
 
@@ -659,7 +661,7 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
                           className="form-input"
                           value={fn.text}
                           onChange={(e) => handleUpdateFootnote(fn.id, e.target.value)}
-                          placeholder="Išnašos tekstas..."
+                          placeholder={t('treeMetadataModal.footnoteTextPlaceholder')}
                         />
                         <button
                           type="button"
@@ -679,10 +681,10 @@ export const TreeMetadataModal: React.FC<TreeMetadataModalProps> = ({
           {/* Footer */}
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Atšaukti
+              {t('treeMetadataModal.cancel')}
             </button>
             <button type="submit" className="btn btn-primary">
-              Išsaugoti Pakeitimus
+              {t('treeMetadataModal.saveChanges')}
             </button>
           </div>
         </form>

@@ -10,10 +10,13 @@ import { AnalyticsModal } from './components/AnalyticsModal';
 import { ExportModal } from './components/ExportModal';
 import { TemplatePickerModal } from './components/TemplatePickerModal';
 import { OutlinerSidebar } from './components/OutlinerSidebar';
+import { useTranslation } from './i18n/LanguageContext';
 
 const LOCAL_STORAGE_KEY = 'family_tree_current_data_v1';
 
 export const App: React.FC = () => {
+  const { t } = useTranslation();
+
   // Initialize tree from localStorage or default Tamošius Gaidys
   const [tree, setTree] = useState<FamilyTreeData>(() => {
     try {
@@ -190,7 +193,7 @@ export const App: React.FC = () => {
 
     const newPerson: Person = {
       id: newPersonId,
-      firstName: personData.firstName || 'VARDAS',
+      firstName: personData.firstName || t('app.defaultFirstName'),
       lastName: personData.lastName || '',
       maidenName: personData.maidenName,
       gender: personData.gender || 'male',
@@ -290,11 +293,11 @@ export const App: React.FC = () => {
   const handleImportJson = (data: any) => {
     // Basic validation
     if (!data || !Array.isArray(data.people) || !Array.isArray(data.marriages)) {
-      alert('Netinkamas JSON formatas. Failas turi turėti "people" ir "marriages" masyvus.');
+      alert(t('app.invalidJsonPeopleMarriages'));
       return;
     }
     if (!data.metadata || !data.sections) {
-      alert('Netinkamas JSON formatas. Trūksta "metadata" arba "sections" duomenų.');
+      alert(t('app.invalidJsonMetaSections'));
       return;
     }
     updateTreeState(data as FamilyTreeData);

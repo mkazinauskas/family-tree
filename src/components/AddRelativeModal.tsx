@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Person, TreeSection, ThemePreset } from '../types/familyTree';
 import { THEME_PRESETS } from '../engine/themePresets';
 import { X, UserPlus, Heart, Users, ArrowUp, Sparkles } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface AddRelativeModalProps {
   relativeTo: Person | null;
@@ -26,6 +27,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
   onAdd,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [relationType, setRelationType] = useState<'child' | 'spouse' | 'sibling' | 'parent' | 'root'>(
     relativeTo ? 'child' : 'root'
   );
@@ -55,9 +57,10 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
 
     let spouseBanner = undefined;
     if (relationType === 'spouse') {
+      const bannerWord = t('addRelativeModal.bannerMarriageWord');
       spouseBanner = marriageDate
-        ? `SANTUOKA · ${marriageDate}`
-        : `${marriageNumber} SANTUOKA`;
+        ? `${bannerWord} · ${marriageDate}`
+        : `${marriageNumber} ${bannerWord}`;
     }
 
     onAdd({
@@ -100,7 +103,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
         <div className="modal-header">
           <div className="modal-title">
             <UserPlus size={20} className="text-sky-400" />
-            <span>Pridėti Naują Giminės Narį</span>
+            <span>{t('addRelativeModal.title')}</span>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={16} />
@@ -114,7 +117,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
             {relativeTo && (
               <div className="form-group">
                 <label className="form-label">
-                  Ryšys su <strong>{relativeTo.firstName} {relativeTo.lastName || ''}</strong>
+                  {t('addRelativeModal.relationTo')} <strong>{relativeTo.firstName} {relativeTo.lastName || ''}</strong>
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                   <button
@@ -125,7 +128,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
                       setThemePreset('branch1-descendant');
                     }}
                   >
-                    <Sparkles size={14} /> Vaikas
+                    <Sparkles size={14} /> {t('addRelativeModal.relChild')}
                   </button>
                   <button
                     type="button"
@@ -136,14 +139,14 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
                       setThemePreset('branch1-primary');
                     }}
                   >
-                    <Heart size={14} /> Sutuoktinis
+                    <Heart size={14} /> {t('addRelativeModal.relSpouse')}
                   </button>
                   <button
                     type="button"
                     className={`btn ${relationType === 'sibling' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
                     onClick={() => setRelationType('sibling')}
                   >
-                    <Users size={14} /> Brolis/Sesuo
+                    <Users size={14} /> {t('addRelativeModal.relSibling')}
                   </button>
                   <button
                     type="button"
@@ -153,7 +156,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
                       setThemePreset('ancestor-blue');
                     }}
                   >
-                    <ArrowUp size={14} /> Tėvas/Motina
+                    <ArrowUp size={14} /> {t('addRelativeModal.relParent')}
                   </button>
                 </div>
               </div>
@@ -171,25 +174,25 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
               >
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">Santuokos numeris</label>
+                    <label className="form-label">{t('addRelativeModal.marriageNumber')}</label>
                     <select
                       className="form-select"
                       value={marriageNumber}
                       onChange={(e) => setMarriageNumber(e.target.value)}
                     >
-                      <option value="I">I Santuoka</option>
-                      <option value="II">II Santuoka</option>
-                      <option value="III">III Santuoka</option>
+                      <option value="I">{t('addRelativeModal.marriageNumberI')}</option>
+                      <option value="II">{t('addRelativeModal.marriageNumberII')}</option>
+                      <option value="III">{t('addRelativeModal.marriageNumberIII')}</option>
                     </select>
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Santuokos data</label>
+                    <label className="form-label">{t('addRelativeModal.marriageDate')}</label>
                     <input
                       type="text"
                       className="form-input"
                       value={marriageDate}
                       onChange={(e) => setMarriageDate(e.target.value)}
-                      placeholder="pvz., 1916.02.29"
+                      placeholder={t('addRelativeModal.marriageDatePlaceholder')}
                     />
                   </div>
                 </div>
@@ -199,7 +202,7 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
             {/* Names */}
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Vardas *</label>
+                <label className="form-label">{t('addRelativeModal.firstName')}</label>
                 <input
                   type="text"
                   required
@@ -207,44 +210,44 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
                   className="form-input"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="pvz., JONAS"
+                  placeholder={t('addRelativeModal.firstNamePlaceholder')}
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Pavardė</label>
+                <label className="form-label">{t('addRelativeModal.lastName')}</label>
                 <input
                   type="text"
                   className="form-input"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  placeholder="pvz., GAIDYS"
+                  placeholder={t('addRelativeModal.lastNamePlaceholder')}
                 />
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Mergautinė pavardė / Alias</label>
+                <label className="form-label">{t('addRelativeModal.maidenName')}</label>
                 <input
                   type="text"
                   className="form-input"
                   value={maidenName}
                   onChange={(e) => setMaidenName(e.target.value)}
-                  placeholder="pvz., (ŠILAITĖ)"
+                  placeholder={t('addRelativeModal.maidenNamePlaceholder')}
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Lytis</label>
+                <label className="form-label">{t('addRelativeModal.gender')}</label>
                 <select
                   className="form-select"
                   value={gender}
                   onChange={(e) => setGender(e.target.value as any)}
                 >
-                  <option value="male">Vyras</option>
-                  <option value="female">Moteris</option>
-                  <option value="other">Kita</option>
+                  <option value="male">{t('addRelativeModal.genderMale')}</option>
+                  <option value="female">{t('addRelativeModal.genderFemale')}</option>
+                  <option value="other">{t('addRelativeModal.genderOther')}</option>
                 </select>
               </div>
             </div>
@@ -252,48 +255,48 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
             {/* Dates */}
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Gimimo data</label>
+                <label className="form-label">{t('addRelativeModal.birthDate')}</label>
                 <input
                   type="text"
                   className="form-input"
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
-                  placeholder="pvz., 1877.03.02"
+                  placeholder={t('addRelativeModal.birthDatePlaceholder')}
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Mirties data</label>
+                <label className="form-label">{t('addRelativeModal.deathDate')}</label>
                 <input
                   type="text"
                   className="form-input"
                   value={deathDate}
                   onChange={(e) => setDeathDate(e.target.value)}
-                  placeholder="pvz., 1945 arba xxxx"
+                  placeholder={t('addRelativeModal.deathDatePlaceholder')}
                 />
               </div>
             </div>
 
             {/* Location & Notes */}
             <div className="form-group">
-              <label className="form-label">Vietovė / Parapija</label>
+              <label className="form-label">{t('addRelativeModal.location')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="pvz., Vareikų k., Subačiaus par."
+                placeholder={t('addRelativeModal.locationPlaceholder')}
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Pastabos (kiekviena eilutė atskirai)</label>
+              <label className="form-label">{t('addRelativeModal.notes')}</label>
               <textarea
                 className="form-textarea"
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Krikšto tėvai: Kazimieras Gaidys..."
+                placeholder={t('addRelativeModal.notesPlaceholder')}
               />
             </div>
           </div>
@@ -301,11 +304,11 @@ export const AddRelativeModal: React.FC<AddRelativeModalProps> = ({
           {/* Footer */}
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Atšaukti
+              {t('addRelativeModal.cancel')}
             </button>
             <button type="submit" className="btn btn-primary">
               <UserPlus size={16} />
-              <span>Sukurti ir Įterpti</span>
+              <span>{t('addRelativeModal.submit')}</span>
             </button>
           </div>
         </form>

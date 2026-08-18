@@ -12,6 +12,7 @@ import {
   MapPin, 
   Move
 } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface CanvasProps {
   tree: FamilyTreeData;
@@ -36,6 +37,7 @@ export const Canvas: React.FC<CanvasProps> = ({
   onUpdatePersonPosition,
   onOpenMetadataModal,
 }) => {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number>(0.65);
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 40, y: 30 });
@@ -480,7 +482,7 @@ export const Canvas: React.FC<CanvasProps> = ({
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => handleZoom(-0.1)}
-          title="Priartinti / Zoom Out"
+          title={t('canvas.zoomOut')}
         >
           <ZoomOut size={16} />
         </button>
@@ -492,7 +494,7 @@ export const Canvas: React.FC<CanvasProps> = ({
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => handleZoom(0.1)}
-          title="Nutolinti / Zoom In"
+          title={t('canvas.zoomIn')}
         >
           <ZoomIn size={16} />
         </button>
@@ -502,10 +504,10 @@ export const Canvas: React.FC<CanvasProps> = ({
         <button
           className="btn btn-ghost btn-sm"
           onClick={handleFitToScreen}
-          title="Talpinti ekrane / Fit to Screen"
+          title={t('canvas.fitToScreen')}
         >
           <Maximize2 size={16} />
-          <span>Talpinti</span>
+          <span>{t('canvas.fit')}</span>
         </button>
 
         <button
@@ -514,7 +516,7 @@ export const Canvas: React.FC<CanvasProps> = ({
             setScale(1);
             setPan({ x: 40, y: 30 });
           }}
-          title="100% Mastelis / Reset Zoom"
+          title={t('canvas.resetZoom')}
         >
           <RotateCcw size={15} />
           <span>100%</span>
@@ -535,7 +537,7 @@ export const Canvas: React.FC<CanvasProps> = ({
             y: clientHeight / 2 - clickY * canvasHeight * scale,
           });
         }}
-        title="Minimap navigator"
+        title={t('canvas.minimapTitle')}
       >
         <svg width="100%" height="100%" viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}>
           <rect width="100%" height="100%" fill="#ffffff" />

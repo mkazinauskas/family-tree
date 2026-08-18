@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FamilyTreeData, Person } from '../types/familyTree';
 import { getPersonTheme } from '../engine/themePresets';
 import { Layers, Search, User, X, Plus } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface OutlinerSidebarProps {
   tree: FamilyTreeData;
@@ -18,6 +19,7 @@ export const OutlinerSidebar: React.FC<OutlinerSidebarProps> = ({
   onAddPerson,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [filterQuery, setFilterQuery] = useState('');
 
   const { sections, people } = tree;
@@ -50,7 +52,7 @@ export const OutlinerSidebar: React.FC<OutlinerSidebarProps> = ({
       <div className="inspector-header">
         <div className="inspector-title">
           <Layers size={18} className="text-sky-400" />
-          <span>Giminės Sąrašas ({people.length})</span>
+          <span>{t('outlinerSidebar.title', { count: people.length })}</span>
         </div>
         <button className="icon-btn" onClick={onClose}>
           <X size={16} />
@@ -74,7 +76,7 @@ export const OutlinerSidebar: React.FC<OutlinerSidebarProps> = ({
             type="text"
             className="form-input"
             style={{ paddingLeft: '30px', height: '32px', fontSize: '12px' }}
-            placeholder="Filtruoti asmenis..."
+            placeholder={t('outlinerSidebar.filterPlaceholder')}
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
           />
@@ -147,9 +149,9 @@ export const OutlinerSidebar: React.FC<OutlinerSidebarProps> = ({
                         {person.firstName} {person.lastName || ''}
                       </span>
                       <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                        {person.birthDate || 'xxxx'}
+                        {person.birthDate || t('outlinerSidebar.unknownDate')}
                         {person.deathDate ? ` – ${person.deathDate}` : ''}
-                        {person.generation ? ` · ${person.generation} karta` : ''}
+                        {person.generation ? ` · ${t('outlinerSidebar.generationSuffix', { gen: person.generation })}` : ''}
                       </span>
                     </div>
                   </div>
@@ -164,7 +166,7 @@ export const OutlinerSidebar: React.FC<OutlinerSidebarProps> = ({
       <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border-subtle)' }}>
         <button className="btn btn-primary btn-sm" style={{ width: '100%' }} onClick={onAddPerson}>
           <Plus size={14} />
-          <span>Pridėti Asmenį</span>
+          <span>{t('outlinerSidebar.addPerson')}</span>
         </button>
       </div>
     </aside>

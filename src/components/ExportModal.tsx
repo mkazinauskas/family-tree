@@ -13,6 +13,7 @@ import {
   Printer,
   Sparkles
 } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface ExportModalProps {
   tree: FamilyTreeData;
@@ -20,6 +21,7 @@ interface ExportModalProps {
 }
 
 export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
+  const { t } = useTranslation();
   const [exportType, setExportType] = useState<'html' | 'svg' | 'json' | 'png'>('html');
   const [copied, setCopied] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -124,7 +126,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
         <div className="modal-header">
           <div className="modal-title">
             <Download size={20} className="text-sky-400" />
-            <span>Eksportuoti Giminės Medį</span>
+            <span>{t('exportModal.title')}</span>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={16} />
@@ -134,7 +136,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
         {/* Body */}
         <div className="modal-body">
           <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-            Pasirinkite norimą failo formatą. Visi formatai išlaiko aukštos kokybės A3 spaudos proporcijas ir originalų dizainą.
+            {t('exportModal.description')}
           </div>
 
           {/* Export format choices */}
@@ -154,10 +156,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '14px' }}>
                 <Printer size={16} className="text-sky-400" />
-                <span>HTML (Kaip pavyzdys)</span>
+                <span>{t('exportModal.htmlTitle')}</span>
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                Savarankiškas .html failas su A3 spaudos nustatymais (kaip 3-Tamosius.html).
+                {t('exportModal.htmlDesc')}
               </div>
             </div>
 
@@ -176,10 +178,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '14px' }}>
                 <FileCode size={16} className="text-teal-400" />
-                <span>Vektorinis SVG</span>
+                <span>{t('exportModal.svgTitle')}</span>
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                Vektorinis failas, tinkamas spaudai, iliustracijoms ir leidybai.
+                {t('exportModal.svgDesc')}
               </div>
             </div>
 
@@ -198,10 +200,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '14px' }}>
                 <Image size={16} className="text-amber-400" />
-                <span>Ultra HD PNG (2x)</span>
+                <span>{t('exportModal.pngTitle')}</span>
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                Didelės raiškos paveikslėlis peržiūrai ir dalinimuisi.
+                {t('exportModal.pngDesc')}
               </div>
             </div>
 
@@ -220,10 +222,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '14px' }}>
                 <FileJson size={16} className="text-purple-400" />
-                <span>Projekto JSON</span>
+                <span>{t('exportModal.jsonTitle')}</span>
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                Pilna projekto atsarginė kopija vėlesniam redagavimui.
+                {t('exportModal.jsonDesc')}
               </div>
             </div>
           </div>
@@ -234,13 +236,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
           {exportType !== 'png' && (
             <button className="btn btn-secondary" onClick={handleCopyCode}>
               {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
-              <span>{copied ? 'Nukopijuota!' : 'Kopijuoti kodą'}</span>
+              <span>{copied ? t('exportModal.copied') : t('exportModal.copyCode')}</span>
             </button>
           )}
 
           <button className="btn btn-primary" onClick={handleDownload} disabled={isExporting}>
             <Download size={16} />
-            <span>Atsisiųsti {exportType.toUpperCase()}</span>
+            <span>{t('exportModal.download', { type: exportType.toUpperCase() })}</span>
           </button>
         </div>
       </div>

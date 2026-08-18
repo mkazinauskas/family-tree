@@ -1,18 +1,21 @@
 import React, { useRef } from 'react';
-import { 
-  GitFork, 
-  Plus, 
-  Search, 
-  Download, 
+import {
+  GitFork,
+  Plus,
+  Search,
+  Download,
   Upload,
-  BarChart3, 
-  Layers, 
-  FileText, 
-  Undo2, 
-  Redo2, 
+  BarChart3,
+  Layers,
+  FileText,
+  Undo2,
+  Redo2,
   Sparkles,
-  Sliders
+  Sliders,
+  Globe
 } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
+import { LANGUAGES } from '../i18n/translations';
 
 interface HeaderProps {
   treeTitle: string;
@@ -50,6 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
   isOutlinerOpen,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t, lang, setLang } = useTranslation();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -60,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
         const parsed = JSON.parse(ev.target?.result as string);
         onImportJson(parsed);
       } catch (err) {
-        alert('Klaida: nepavyko nuskaityti JSON failo. Patikrinkite failo formatą.');
+        alert(t('header.jsonImportError'));
         console.error('JSON import error:', err);
       }
     };
@@ -76,19 +80,19 @@ export const Header: React.FC<HeaderProps> = ({
           <GitFork size={18} />
         </div>
         <div className="brand-text">
-          <span className="brand-title">Family Tree Studio</span>
-          <span className="brand-badge">Genealogijos Redaktorius</span>
+          <span className="brand-title">{t('header.brandTitle')}</span>
+          <span className="brand-badge">{t('header.brandBadge')}</span>
         </div>
 
         {/* Tree Title Badge Button */}
-        <div 
-          className="tree-title-pill" 
+        <div
+          className="tree-title-pill"
           onClick={onOpenMetadata}
-          title="Redaguoti medžio pavadinimą ir parametrus"
+          title={t('header.editTreeTitle')}
         >
           <FileText size={14} className="text-muted" />
           <span className="truncate" style={{ maxWidth: '280px' }}>
-            {treeTitle || 'Genealoginis Medis'}
+            {treeTitle || t('header.treeTitleFallback')}
           </span>
           <Sliders size={12} className="text-muted" />
         </div>
@@ -112,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
             type="text"
             className="form-input"
             style={{ paddingLeft: '30px', height: '32px', fontSize: '12px' }}
-            placeholder="Ieškoti giminaičio..."
+            placeholder={t('header.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -142,7 +146,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="icon-btn"
             disabled={!canUndo}
             onClick={onUndo}
-            title="Atšaukti (Ctrl+Z)"
+            title={t('header.undoTooltip')}
             style={{ opacity: canUndo ? 1 : 0.4 }}
           >
             <Undo2 size={15} />
@@ -151,7 +155,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="icon-btn"
             disabled={!canRedo}
             onClick={onRedo}
-            title="Grąžinti (Ctrl+Y)"
+            title={t('header.redoTooltip')}
             style={{ opacity: canRedo ? 1 : 0.4 }}
           >
             <Redo2 size={15} />
@@ -161,23 +165,45 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Actions */}
       <div className="header-actions">
+        {/* Language Switcher */}
+        <div className="icon-btn" title={t('header.languageTooltip')} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'default', padding: '0 4px' }}>
+          <Globe size={14} className="text-muted" />
+          {LANGUAGES.map((l) => (
+            <button
+              key={l.code}
+              className="btn-ghost btn-sm"
+              onClick={() => setLang(l.code)}
+              style={{
+                padding: '2px 6px',
+                fontSize: '11px',
+                fontWeight: 700,
+                borderRadius: '4px',
+                color: lang === l.code ? '#38bdf8' : 'var(--text-muted)',
+                background: lang === l.code ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+              }}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+
         {/* Templates Picker */}
         <button className="btn btn-secondary btn-sm" onClick={onOpenTemplates}>
           <Sparkles size={14} className="text-amber-400" />
-          <span>Šablonai</span>
+          <span>{t('header.templates')}</span>
         </button>
 
         {/* Add Person Button */}
         <button className="btn btn-primary btn-sm" onClick={onOpenAddPerson}>
           <Plus size={15} />
-          <span>Pridėti Asmenį</span>
+          <span>{t('header.addPerson')}</span>
         </button>
 
         {/* Tree Outliner Toggle */}
         <button
           className={`icon-btn ${isOutlinerOpen ? 'active' : ''}`}
           onClick={onToggleOutliner}
-          title="Giminės sąrašas ir struktūra"
+          title={t('header.outlinerTooltip')}
         >
           <Layers size={16} />
         </button>
@@ -186,7 +212,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           className="icon-btn"
           onClick={onOpenAnalytics}
-          title="Statistika ir analizė"
+          title={t('header.analyticsTooltip')}
         >
           <BarChart3 size={16} />
         </button>
@@ -202,16 +228,16 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           className="btn btn-secondary btn-sm"
           onClick={() => fileInputRef.current?.click()}
-          title="Importuoti giminės medį iš JSON failo"
+          title={t('header.importTooltip')}
         >
           <Upload size={14} />
-          <span>Importuoti</span>
+          <span>{t('header.import')}</span>
         </button>
 
         {/* Export Button */}
         <button className="btn btn-secondary btn-sm" onClick={onOpenExport}>
           <Download size={14} />
-          <span>Eksportuoti</span>
+          <span>{t('header.export')}</span>
         </button>
       </div>
     </header>

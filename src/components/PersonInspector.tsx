@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { Person, Marriage, ThemePreset, TreeSection } from '../types/familyTree';
 import { THEME_PRESETS } from '../engine/themePresets';
-import { 
-  User, 
-  Heart, 
-  Calendar, 
-  MapPin, 
-  FileText, 
-  Palette, 
-  Plus, 
-  Trash2, 
-  X, 
+import {
+  User,
+  Heart,
+  Calendar,
+  MapPin,
+  FileText,
+  Palette,
+  Plus,
+  Trash2,
+  X,
   Move,
   Users
 } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface PersonInspectorProps {
   person: Person;
@@ -38,6 +39,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
   onAddSpouse,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'general' | 'notes' | 'marriages' | 'style'>('general');
 
   const personMarriages = marriages.filter(
@@ -70,15 +72,15 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
   };
 
   const presetList: { key: ThemePreset; label: string; preview: string; border: string }[] = [
-    { key: 'ancestor-blue', label: 'Protėviai (Mėlyna)', preview: '#D9E7F5', border: '#245C8C' },
-    { key: 'branch1-primary', label: 'I Santuoka (Tamsi Žalia)', preview: '#DDEDE7', border: '#2E6B5E' },
-    { key: 'branch1-descendant', label: 'I Palikuonys (Šviesi Žalia)', preview: '#EFF7F4', border: '#7FB3A5' },
-    { key: 'branch2-primary', label: 'II Santuoka (Gintarinė)', preview: '#FBEEDA', border: '#B5761F' },
-    { key: 'branch2-descendant', label: 'II Palikuonys (Šviesi Gintarinė)', preview: '#FDF7EC', border: '#D8B378' },
-    { key: 'other-slate', label: 'Kitos šakos (Pilka)', preview: '#F4F5F7', border: '#A9B0BA' },
-    { key: 'emerald', label: 'Smaragdas', preview: '#DCFCE7', border: '#16A34A' },
-    { key: 'purple', label: 'Karališka Violetinė', preview: '#F3E8FF', border: '#9333EA' },
-    { key: 'rose', label: 'Raudona / Rožinė', preview: '#FFE4E6', border: '#E11D48' },
+    { key: 'ancestor-blue', label: t('personInspector.themePresets.ancestor-blue'), preview: '#D9E7F5', border: '#245C8C' },
+    { key: 'branch1-primary', label: t('personInspector.themePresets.branch1-primary'), preview: '#DDEDE7', border: '#2E6B5E' },
+    { key: 'branch1-descendant', label: t('personInspector.themePresets.branch1-descendant'), preview: '#EFF7F4', border: '#7FB3A5' },
+    { key: 'branch2-primary', label: t('personInspector.themePresets.branch2-primary'), preview: '#FBEEDA', border: '#B5761F' },
+    { key: 'branch2-descendant', label: t('personInspector.themePresets.branch2-descendant'), preview: '#FDF7EC', border: '#D8B378' },
+    { key: 'other-slate', label: t('personInspector.themePresets.other-slate'), preview: '#F4F5F7', border: '#A9B0BA' },
+    { key: 'emerald', label: t('personInspector.themePresets.emerald'), preview: '#DCFCE7', border: '#16A34A' },
+    { key: 'purple', label: t('personInspector.themePresets.purple'), preview: '#F3E8FF', border: '#9333EA' },
+    { key: 'rose', label: t('personInspector.themePresets.rose'), preview: '#FFE4E6', border: '#E11D48' },
   ];
 
   return (
@@ -91,7 +93,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
             {person.firstName} {person.lastName || ''}
           </span>
         </div>
-        <button className="icon-btn" onClick={onClose} title="Uždaryti redaktorių">
+        <button className="icon-btn" onClick={onClose} title={t('personInspector.closeEditor')}>
           <X size={16} />
         </button>
       </div>
@@ -103,28 +105,28 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
           style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'general' ? '2px solid #38bdf8' : 'none', padding: '9px 0', fontSize: '12px', fontWeight: 600 }}
           onClick={() => setActiveTab('general')}
         >
-          Bendra
+          {t('personInspector.tabGeneral')}
         </button>
         <button
           className={`btn-ghost btn-sm ${activeTab === 'notes' ? 'active' : ''}`}
           style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'notes' ? '2px solid #38bdf8' : 'none', padding: '9px 0', fontSize: '12px', fontWeight: 600 }}
           onClick={() => setActiveTab('notes')}
         >
-          Pastabos
+          {t('personInspector.tabNotes')}
         </button>
         <button
           className={`btn-ghost btn-sm ${activeTab === 'marriages' ? 'active' : ''}`}
           style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'marriages' ? '2px solid #38bdf8' : 'none', padding: '9px 0', fontSize: '12px', fontWeight: 600 }}
           onClick={() => setActiveTab('marriages')}
         >
-          Santuokos
+          {t('personInspector.tabMarriages')}
         </button>
         <button
           className={`btn-ghost btn-sm ${activeTab === 'style' ? 'active' : ''}`}
           style={{ flex: 1, borderRadius: 0, borderBottom: activeTab === 'style' ? '2px solid #38bdf8' : 'none', padding: '9px 0', fontSize: '12px', fontWeight: 600 }}
           onClick={() => setActiveTab('style')}
         >
-          Stilius
+          {t('personInspector.tabStyle')}
         </button>
       </div>
 
@@ -134,54 +136,54 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
         {activeTab === 'general' && (
           <>
             <div className="form-group">
-              <label className="form-label">Vardas</label>
+              <label className="form-label">{t('personInspector.firstName')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={person.firstName}
                 onChange={(e) => handleFieldChange('firstName', e.target.value)}
-                placeholder="pvz., TAMOŠIUS (TOMAS)"
+                placeholder={t('personInspector.firstNamePlaceholder')}
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Pavardė</label>
+              <label className="form-label">{t('personInspector.lastName')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={person.lastName || ''}
                 onChange={(e) => handleFieldChange('lastName', e.target.value)}
-                placeholder="pvz., GAIDYS"
+                placeholder={t('personInspector.lastNamePlaceholder')}
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Mergautinė pavardė / Papildomas vardas</label>
+              <label className="form-label">{t('personInspector.maidenName')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={person.maidenName || ''}
                 onChange={(e) => handleFieldChange('maidenName', e.target.value)}
-                placeholder="pvz., (VASILYTĖ)"
+                placeholder={t('personInspector.maidenNamePlaceholder')}
               />
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Lytis</label>
+                <label className="form-label">{t('personInspector.gender')}</label>
                 <select
                   className="form-select"
                   value={person.gender || 'male'}
                   onChange={(e) => handleFieldChange('gender', e.target.value)}
                 >
-                  <option value="male">Vyras</option>
-                  <option value="female">Moteris</option>
-                  <option value="other">Kita</option>
+                  <option value="male">{t('personInspector.genderMale')}</option>
+                  <option value="female">{t('personInspector.genderFemale')}</option>
+                  <option value="other">{t('personInspector.genderOther')}</option>
                 </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Karta</label>
+                <label className="form-label">{t('personInspector.generation')}</label>
                 <input
                   type="number"
                   min={1}
@@ -194,7 +196,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
             </div>
 
             <div className="form-group">
-              <label className="form-label">Sekcija / Šaka</label>
+              <label className="form-label">{t('personInspector.section')}</label>
               <select
                 className="form-select"
                 value={person.sectionId || ''}
@@ -215,60 +217,60 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
           <>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Gimimo data</label>
+                <label className="form-label">{t('personInspector.birthDate')}</label>
                 <input
                   type="text"
                   className="form-input"
                   value={person.birthDate || ''}
                   onChange={(e) => handleFieldChange('birthDate', e.target.value)}
-                  placeholder="1844 arba 1875.08.29"
+                  placeholder={t('personInspector.birthDatePlaceholder')}
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Mirties data</label>
+                <label className="form-label">{t('personInspector.deathDate')}</label>
                 <input
                   type="text"
                   className="form-input"
                   value={person.deathDate || ''}
                   onChange={(e) => handleFieldChange('deathDate', e.target.value)}
-                  placeholder="1910.10.27 arba xxxx"
+                  placeholder={t('personInspector.deathDatePlaceholder')}
                 />
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Amžius / Pastaba prie mirties datos</label>
+              <label className="form-label">{t('personInspector.ageAtDeath')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={person.ageAtDeath || ''}
                 onChange={(e) => handleFieldChange('ageAtDeath', e.target.value)}
-                placeholder="pvz., 70 m. arba 35 m."
+                placeholder={t('personInspector.ageAtDeathPlaceholder')}
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Vietovė / Parapija / Kaimas</label>
+              <label className="form-label">{t('personInspector.location')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={person.location || ''}
                 onChange={(e) => handleFieldChange('location', e.target.value)}
-                placeholder="pvz., Vareikų k., Subačiaus par."
+                placeholder={t('personInspector.locationPlaceholder')}
               />
             </div>
 
             {/* Notes List */}
             <div className="form-group">
               <div className="form-label">
-                <span>Istorinės pastabos / Liudininkai / Krikšto tėvai</span>
+                <span>{t('personInspector.historicalNotes')}</span>
                 <button
                   className="btn btn-ghost btn-sm"
                   onClick={handleAddNoteLine}
                   style={{ padding: '2px 6px', fontSize: '11px' }}
                 >
-                  <Plus size={12} /> Pridėti eilutę
+                  <Plus size={12} /> {t('personInspector.addLine')}
                 </button>
               </div>
 
@@ -280,13 +282,13 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
                       className="form-input"
                       value={note}
                       onChange={(e) => handleUpdateNoteLine(idx, e.target.value)}
-                      placeholder="pvz., Krikšto tėvai: Kazimieras Gaidys..."
+                      placeholder={t('personInspector.notePlaceholder')}
                     />
                     <button
                       className="icon-btn"
                       style={{ width: '32px', height: '32px', flexShrink: 0 }}
                       onClick={() => handleRemoveNoteLine(idx)}
-                      title="Pašalinti eilutę"
+                      title={t('personInspector.removeLine')}
                     >
                       <Trash2 size={13} className="text-red-400" />
                     </button>
@@ -294,7 +296,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
                 ))
               ) : (
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', padding: '8px 0' }}>
-                  Nėra papildomų pastabų.
+                  {t('personInspector.noNotes')}
                 </div>
               )}
             </div>
@@ -305,25 +307,25 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
         {activeTab === 'marriages' && (
           <>
             <div className="form-group">
-              <label className="form-label">Sutuoktinio kaspinas / Antraštė kortelėje</label>
+              <label className="form-label">{t('personInspector.spouseBanner')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={person.spouseBanner || ''}
                 onChange={(e) => handleFieldChange('spouseBanner', e.target.value)}
-                placeholder="pvz., I SANTUOKA · 1874.11.22"
+                placeholder={t('personInspector.spouseBannerPlaceholder')}
               />
             </div>
 
             <div className="form-group">
               <div className="form-label">
-                <span>Registruotos Santuokos ({personMarriages.length})</span>
+                <span>{t('personInspector.registeredMarriages', { count: personMarriages.length })}</span>
                 <button
                   className="btn btn-ghost btn-sm"
                   onClick={() => onAddSpouse(person)}
                   style={{ padding: '2px 6px', fontSize: '11px' }}
                 >
-                  <Plus size={12} /> Pridėti sutuoktinį
+                  <Plus size={12} /> {t('personInspector.addSpouse')}
                 </button>
               </div>
 
@@ -345,14 +347,14 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontWeight: 600, fontSize: '13px', color: '#38bdf8' }}>
-                        {m.marriageNumber || 'Santuoka'} {m.marriageDate ? `(${m.marriageDate})` : ''}
+                        {m.marriageNumber || t('personInspector.marriageWord')} {m.marriageDate ? `(${m.marriageDate})` : ''}
                       </span>
                       <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                        {m.childrenIds.length} vaikų
+                        {t('personInspector.childrenCount', { count: m.childrenIds.length })}
                       </span>
                     </div>
                     <div style={{ fontSize: '12px', marginTop: '4px', color: 'var(--text-primary)' }}>
-                      Sutuoktinis: <strong>{spouse ? `${spouse.firstName} ${spouse.lastName || ''}` : 'Nenurodytas'}</strong>
+                      {t('personInspector.spouseLabel')} <strong>{spouse ? `${spouse.firstName} ${spouse.lastName || ''}` : t('personInspector.notSpecified')}</strong>
                     </div>
                   </div>
                 );
@@ -366,7 +368,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
                 onClick={() => onAddChild(person)}
               >
                 <Plus size={14} />
-                <span>Pridėti Vaiką</span>
+                <span>{t('personInspector.addChild')}</span>
               </button>
               <button
                 className="btn btn-secondary btn-sm"
@@ -374,7 +376,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
                 onClick={() => onAddSpouse(person)}
               >
                 <Heart size={14} className="text-rose-400" />
-                <span>Pridėti Sutuoktinį</span>
+                <span>{t('personInspector.addSpouseBtn')}</span>
               </button>
             </div>
           </>
@@ -384,7 +386,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
         {activeTab === 'style' && (
           <>
             <div className="form-group">
-              <label className="form-label">Spalvinė tema / Šaka</label>
+              <label className="form-label">{t('personInspector.colorTheme')}</label>
               <div className="color-swatches-grid">
                 {presetList.map((preset) => (
                   <div
@@ -404,7 +406,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Pozicija X</label>
+                <label className="form-label">{t('personInspector.positionX')}</label>
                 <input
                   type="number"
                   className="form-input"
@@ -414,7 +416,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
               </div>
 
               <div className="form-group">
-                <label className="form-label">Pozicija Y</label>
+                <label className="form-label">{t('personInspector.positionY')}</label>
                 <input
                   type="number"
                   className="form-input"
@@ -426,7 +428,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Plotis (W)</label>
+                <label className="form-label">{t('personInspector.widthLabel')}</label>
                 <input
                   type="number"
                   className="form-input"
@@ -436,7 +438,7 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
               </div>
 
               <div className="form-group">
-                <label className="form-label">Aukštis (H)</label>
+                <label className="form-label">{t('personInspector.heightLabel')}</label>
                 <input
                   type="number"
                   className="form-input"
@@ -454,13 +456,13 @@ export const PersonInspector: React.FC<PersonInspectorProps> = ({
             className="btn btn-danger btn-sm"
             style={{ width: '100%' }}
             onClick={() => {
-              if (window.confirm(`Ar tikrai norite pašalinti ${person.firstName} ${person.lastName || ''} iš giminės medžio?`)) {
+              if (window.confirm(t('personInspector.deleteConfirm', { name: `${person.firstName} ${person.lastName || ''}` }))) {
                 onDeletePerson(person.id);
               }
             }}
           >
             <Trash2 size={14} />
-            <span>Ištrinti šį asmenį</span>
+            <span>{t('personInspector.deletePerson')}</span>
           </button>
         </div>
       </div>

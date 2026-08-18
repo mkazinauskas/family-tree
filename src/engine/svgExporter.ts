@@ -2,6 +2,7 @@ import { FamilyTreeData, Person } from '../types/familyTree';
 import { getPersonTheme } from './themePresets';
 import { computeTreeLayout } from './layoutEngine';
 import { computeCardTextLayout } from './cardTextLayout';
+import { getPaperFormat, getOrientedMm, findClosestFormat } from './paperFormats';
 
 function escapeXml(unsafe: string): string {
   return unsafe
@@ -186,6 +187,14 @@ export function generateTreeSvgString(tree: FamilyTreeData): string {
 
 export function generateStandaloneHtml(tree: FamilyTreeData): string {
   const svgContent = generateTreeSvgString(tree);
+  const { metadata } = tree;
+  const canvasWidth = metadata.canvasWidth || 1942;
+  const canvasHeight = metadata.canvasHeight || 1383;
+  const inferred = findClosestFormat(canvasWidth, canvasHeight);
+  const orientation = metadata.orientation || inferred.orientation;
+  const format = getPaperFormat(metadata.paperFormat || inferred.formatId);
+  const { widthMm, heightMm } = getOrientedMm(format, orientation);
+
   return `<!doctype html>
 <html lang="lt">
   <head>
@@ -193,7 +202,7 @@ export function generateStandaloneHtml(tree: FamilyTreeData): string {
     <title>${escapeXml(tree.metadata.title || tree.name)}</title>
     <style>
       @page {
-        size: A3 landscape;
+        size: ${widthMm}mm ${heightMm}mm;
         margin: 0;
       }
       html,
@@ -204,8 +213,8 @@ export function generateStandaloneHtml(tree: FamilyTreeData): string {
         font-family: "DejaVu Sans Condensed", "DejaVu Sans", "Outfit", "Inter", sans-serif;
       }
       .sheet {
-        width: 420mm;
-        height: 297mm;
+        width: ${widthMm}mm;
+        height: ${heightMm}mm;
         box-sizing: border-box;
         padding: 7mm;
         margin: 10px auto;
@@ -222,8 +231,8 @@ export function generateStandaloneHtml(tree: FamilyTreeData): string {
         html,
         body {
           background: #fff;
-          width: 420mm;
-          height: 297mm;
+          width: ${widthMm}mm;
+          height: ${heightMm}mm;
           overflow: hidden;
         }
         .sheet {

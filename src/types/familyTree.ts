@@ -120,6 +120,8 @@ export interface TreeMetadata {
   sheetNumber: string;
   canvasWidth: number;
   canvasHeight: number;
+  paperFormat?: string;
+  orientation?: 'landscape' | 'portrait';
   headerDividerY: number;
   footerY: number;
   fontFamily: string;

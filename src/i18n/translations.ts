@@ -42,12 +42,11 @@ export const translations = {
       actionSelectTemplate: 'Pasirinktas šablonas: {{name}}',
       actionImportJson: 'Importuoti duomenys iš JSON',
     },
-    historyModal: {
-      title: 'Veiksmų Istorija',
+    historySidebar: {
+      title: 'Veiksmų Istorija ({{count}})',
       description: 'Visi atlikti pakeitimai šioje sesijoje. Spustelėkite bet kurį įrašą, kad grįžtumėte į tą būseną.',
       currentBadge: 'Dabartinė',
       empty: 'Kol kas nėra atliktų veiksmų.',
-      close: 'Uždaryti',
     },
     app: {
       invalidJsonPeopleMarriages: 'Netinkamas JSON formatas. Failas turi turėti "people" ir "marriages" masyvus.',
@@ -294,12 +293,11 @@ export const translations = {
       actionSelectTemplate: 'Selected template: {{name}}',
       actionImportJson: 'Imported data from JSON',
     },
-    historyModal: {
-      title: 'Action History',
+    historySidebar: {
+      title: 'Action History ({{count}})',
       description: 'Every change made in this session. Click any entry to jump back to that state.',
       currentBadge: 'Current',
       empty: 'No actions performed yet.',
-      close: 'Close',
     },
     app: {
       invalidJsonPeopleMarriages: 'Invalid JSON format. The file must contain "people" and "marriages" arrays.',

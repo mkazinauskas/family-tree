@@ -10,7 +10,7 @@ import { AnalyticsModal } from './components/AnalyticsModal';
 import { ExportModal } from './components/ExportModal';
 import { TemplatePickerModal } from './components/TemplatePickerModal';
 import { OutlinerSidebar } from './components/OutlinerSidebar';
-import { HistoryModal } from './components/HistoryModal';
+import { HistorySidebar } from './components/HistorySidebar';
 import { useTranslation } from './i18n/LanguageContext';
 
 const LOCAL_STORAGE_KEY = 'family_tree_current_data_v1';
@@ -66,7 +66,7 @@ export const App: React.FC = () => {
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false);
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState(false);
 
   // Save to localStorage
   useEffect(() => {
@@ -128,7 +128,6 @@ export const App: React.FC = () => {
         setIsAnalyticsModalOpen(false);
         setIsExportModalOpen(false);
         setIsTemplatePickerOpen(false);
-        setIsHistoryModalOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -366,7 +365,8 @@ export const App: React.FC = () => {
         onOpenMetadata={() => setIsMetadataModalOpen(true)}
         onOpenAnalytics={() => setIsAnalyticsModalOpen(true)}
         onOpenExport={() => setIsExportModalOpen(true)}
-        onOpenHistory={() => setIsHistoryModalOpen(true)}
+        onToggleHistory={() => setIsHistorySidebarOpen((prev) => !prev)}
+        isHistoryOpen={isHistorySidebarOpen}
         onImportJson={handleImportJson}
         onToggleOutliner={() => setIsOutlinerOpen((prev) => !prev)}
         isOutlinerOpen={isOutlinerOpen}
@@ -385,6 +385,16 @@ export const App: React.FC = () => {
               setIsAddRelativeOpen(true);
             }}
             onClose={() => setIsOutlinerOpen(false)}
+          />
+        )}
+
+        {/* History Sidebar */}
+        {isHistorySidebarOpen && (
+          <HistorySidebar
+            entries={historyEntries}
+            currentIndex={historyIndex}
+            onJumpToIndex={handleJumpToHistory}
+            onClose={() => setIsHistorySidebarOpen(false)}
           />
         )}
 
@@ -472,15 +482,6 @@ export const App: React.FC = () => {
           currentTreeId={tree.id}
           onSelectTemplate={handleSelectTemplate}
           onClose={() => setIsTemplatePickerOpen(false)}
-        />
-      )}
-
-      {isHistoryModalOpen && (
-        <HistoryModal
-          entries={historyEntries}
-          currentIndex={historyIndex}
-          onJumpToIndex={handleJumpToHistory}
-          onClose={() => setIsHistoryModalOpen(false)}
         />
       )}
     </div>

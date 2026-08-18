@@ -1,6 +1,6 @@
 import React from 'react';
 import { History, X, Clock, CheckCircle2 } from 'lucide-react';
-import { HistoryEntry } from '../App';
+import { HistoryEntry } from '../hooks/useTreeHistory';
 import { useTranslation } from '../i18n/LanguageContext';
 
 interface HistorySidebarProps {

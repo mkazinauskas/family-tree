@@ -86,23 +86,23 @@ function makeSingleProjectIndex(name: string, history: HistoryState): ProjectsIn
   };
 }
 
-// First run: migrate the old single-tree localStorage format into a project, or seed a fresh one.
-function bootstrapIndex(initialLabel: string, fallbackTree: FamilyTreeData): ProjectsIndex {
-  const legacyRaw = localStorage.getItem(LEGACY_KEY);
-  let history: HistoryState;
+const EMPTY_INDEX: ProjectsIndex = { projects: [], activeProjectId: '' };
 
-  if (legacyRaw) {
-    try {
-      const parsed = JSON.parse(legacyRaw);
-      history = isHistoryState(parsed)
-        ? parsed
-        : { entries: [{ label: initialLabel, timestamp: new Date().toISOString(), tree: parsed as FamilyTreeData }], index: 0 };
-    } catch (e) {
-      console.error('Failed to parse legacy tree data', e);
-      history = { entries: [{ label: initialLabel, timestamp: new Date().toISOString(), tree: fallbackTree }], index: 0 };
-    }
-  } else {
-    history = { entries: [{ label: initialLabel, timestamp: new Date().toISOString(), tree: fallbackTree }], index: 0 };
+// First run: migrate the old single-tree localStorage format into a project, if one exists.
+// If nothing was ever saved, leave the index empty so the user is asked how to create their project.
+function bootstrapIndex(initialLabel: string): ProjectsIndex {
+  const legacyRaw = localStorage.getItem(LEGACY_KEY);
+  if (!legacyRaw) return EMPTY_INDEX;
+
+  let history: HistoryState;
+  try {
+    const parsed = JSON.parse(legacyRaw);
+    history = isHistoryState(parsed)
+      ? parsed
+      : { entries: [{ label: initialLabel, timestamp: new Date().toISOString(), tree: parsed as FamilyTreeData }], index: 0 };
+  } catch (e) {
+    console.error('Failed to parse legacy tree data', e);
+    return EMPTY_INDEX;
   }
 
   const tree = history.entries[Math.min(Math.max(history.index, 0), history.entries.length - 1)].tree;
@@ -116,8 +116,8 @@ function bootstrapIndex(initialLabel: string, fallbackTree: FamilyTreeData): Pro
   return index;
 }
 
-export function useProjects(initialLabel: string, fallbackTree: FamilyTreeData) {
-  const [index, setIndex] = useState<ProjectsIndex>(() => readIndex() || bootstrapIndex(initialLabel, fallbackTree));
+export function useProjects(initialLabel: string) {
+  const [index, setIndex] = useState<ProjectsIndex>(() => readIndex() || bootstrapIndex(initialLabel));
 
   const createProject = useCallback((name: string, initialTree: FamilyTreeData) => {
     const id = genId();
@@ -180,13 +180,9 @@ export function useProjects(initialLabel: string, fallbackTree: FamilyTreeData) 
       let activeProjectId = prev.activeProjectId;
 
       if (remaining.length === 0) {
-        // Never leave the app with zero projects.
-        const now = new Date().toISOString();
-        const seedId = genId();
-        const tree: FamilyTreeData = { ...fallbackTree, updatedAt: now };
-        writeProjectHistory(seedId, { entries: [{ label: initialLabel, timestamp: now, tree }], index: 0 });
-        finalProjects = [{ id: seedId, name: tree.metadata?.title || tree.name || 'Family Tree', createdAt: now, updatedAt: now, peopleCount: tree.people.length }];
-        activeProjectId = seedId;
+        // Zero projects left: the user will be asked how to create a new one.
+        finalProjects = [];
+        activeProjectId = '';
       } else if (activeProjectId === id) {
         activeProjectId = remaining[0].id;
       }
@@ -201,7 +197,7 @@ export function useProjects(initialLabel: string, fallbackTree: FamilyTreeData) 
       writeIndex(next);
       return next;
     });
-  }, [fallbackTree, initialLabel]);
+  }, []);
 
   const saveProjectHistory = useCallback((id: string, state: HistoryState) => {
     writeProjectHistory(id, state);

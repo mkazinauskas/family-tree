@@ -7,7 +7,8 @@ import { useTranslation } from '../i18n/LanguageContext';
 
 interface NewProjectModalProps {
   onCreate: (name: string, treeData: FamilyTreeData) => void;
-  onClose: () => void;
+  /** Omit to force the user to create a project (e.g. when none exist yet) — hides the close/cancel controls. */
+  onClose?: () => void;
 }
 
 export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onCreate, onClose }) => {
@@ -59,9 +60,11 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onCreate, onCl
             <FolderPlus size={20} className="text-sky-400" />
             <span>{t('newProjectModal.title')}</span>
           </div>
-          <button className="icon-btn" onClick={onClose}>
-            <X size={16} />
-          </button>
+          {onClose && (
+            <button className="icon-btn" onClick={onClose}>
+              <X size={16} />
+            </button>
+          )}
         </div>
 
         <div className="modal-body">
@@ -178,9 +181,11 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onCreate, onCl
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>
-            {t('common.cancel')}
-          </button>
+          {onClose && (
+            <button className="btn btn-secondary" onClick={onClose}>
+              {t('common.cancel')}
+            </button>
+          )}
           <button className="btn btn-primary" onClick={handleSubmit} disabled={!uploadedTree && !selectedTemplateId}>
             <FolderPlus size={14} />
             <span>{t('newProjectModal.create')}</span>

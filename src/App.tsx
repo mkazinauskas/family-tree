@@ -21,12 +21,13 @@ export const App: React.FC = () => {
     deleteProject,
     saveProjectHistory,
     loadProjectHistory,
-  } = useProjects(t('history.actionInitial'), tamosiusGaidysTemplate.data);
+  } = useProjects(t('history.actionInitial'));
 
   const [isProjectExplorerOpen, setIsProjectExplorerOpen] = useState(false);
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
 
   const activeProject = projects.find((p) => p.id === activeProjectId);
+  const hasProjects = projects.length > 0;
 
   const loadInitialHistory = useCallback(
     () =>
@@ -52,15 +53,17 @@ export const App: React.FC = () => {
 
   return (
     <>
-      <TreeWorkspace
-        key={activeProjectId}
-        projectName={activeProject?.name || ''}
-        loadInitialHistory={loadInitialHistory}
-        onPersistHistory={handlePersistHistory}
-        onOpenProjectExplorer={() => setIsProjectExplorerOpen(true)}
-      />
+      {hasProjects && (
+        <TreeWorkspace
+          key={activeProjectId}
+          projectName={activeProject?.name || ''}
+          loadInitialHistory={loadInitialHistory}
+          onPersistHistory={handlePersistHistory}
+          onOpenProjectExplorer={() => setIsProjectExplorerOpen(true)}
+        />
+      )}
 
-      {isProjectExplorerOpen && (
+      {hasProjects && isProjectExplorerOpen && (
         <ProjectExplorerModal
           projects={projects}
           activeProjectId={activeProjectId}
@@ -79,8 +82,11 @@ export const App: React.FC = () => {
         />
       )}
 
-      {isNewProjectOpen && (
-        <NewProjectModal onCreate={handleCreateProject} onClose={() => setIsNewProjectOpen(false)} />
+      {(isNewProjectOpen || !hasProjects) && (
+        <NewProjectModal
+          onCreate={handleCreateProject}
+          onClose={hasProjects ? () => setIsNewProjectOpen(false) : undefined}
+        />
       )}
     </>
   );

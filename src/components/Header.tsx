@@ -12,7 +12,8 @@ import {
   Redo2,
   Sparkles,
   Sliders,
-  Globe
+  Globe,
+  History
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { LANGUAGES, Language } from '../i18n/translations';
@@ -30,6 +31,7 @@ interface HeaderProps {
   onOpenMetadata: () => void;
   onOpenAnalytics: () => void;
   onOpenExport: () => void;
+  onOpenHistory: () => void;
   onImportJson: (data: any) => void;
   onToggleOutliner: () => void;
   isOutlinerOpen: boolean;
@@ -48,6 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenMetadata,
   onOpenAnalytics,
   onOpenExport,
+  onOpenHistory,
   onImportJson,
   onToggleOutliner,
   isOutlinerOpen,
@@ -159,6 +162,13 @@ export const Header: React.FC<HeaderProps> = ({
             style={{ opacity: canRedo ? 1 : 0.4 }}
           >
             <Redo2 size={15} />
+          </button>
+          <button
+            className="icon-btn"
+            onClick={onOpenHistory}
+            title={t('header.historyTooltip')}
+          >
+            <History size={15} />
           </button>
         </div>
       </div>

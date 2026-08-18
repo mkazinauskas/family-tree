@@ -10,29 +10,47 @@ import { AnalyticsModal } from './components/AnalyticsModal';
 import { ExportModal } from './components/ExportModal';
 import { TemplatePickerModal } from './components/TemplatePickerModal';
 import { OutlinerSidebar } from './components/OutlinerSidebar';
+import { HistoryModal } from './components/HistoryModal';
 import { useTranslation } from './i18n/LanguageContext';
 
 const LOCAL_STORAGE_KEY = 'family_tree_current_data_v1';
 
+export interface HistoryEntry {
+  label: string;
+  timestamp: string;
+  tree: FamilyTreeData;
+}
+
+interface HistoryState {
+  entries: HistoryEntry[];
+  index: number;
+}
+
+const MAX_HISTORY_ENTRIES = 100;
+
+function loadInitialTree(): FamilyTreeData {
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (e) {
+    console.error('Failed to parse saved tree', e);
+  }
+  return TAMOSIUS_GAIDYS_DATA;
+}
+
 export const App: React.FC = () => {
   const { t } = useTranslation();
 
-  // Initialize tree from localStorage or default Tamošius Gaidys
-  const [tree, setTree] = useState<FamilyTreeData>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {
-      console.error('Failed to parse saved tree', e);
-    }
-    return TAMOSIUS_GAIDYS_DATA;
-  });
+  // Action history: a linear timeline of labeled snapshots with a pointer to the current one.
+  const [historyState, setHistoryState] = useState<HistoryState>(() => ({
+    entries: [{ label: t('history.actionInitial'), timestamp: new Date().toISOString(), tree: loadInitialTree() }],
+    index: 0,
+  }));
+  const { entries: historyEntries, index: historyIndex } = historyState;
 
-  // Undo / Redo History
-  const [history, setHistory] = useState<FamilyTreeData[]>([]);
-  const [future, setFuture] = useState<FamilyTreeData[]>([]);
+  const tree = historyEntries[historyIndex].tree;
 
   // Selected person
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
@@ -48,6 +66,7 @@ export const App: React.FC = () => {
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   // Save to localStorage
   useEffect(() => {
@@ -58,33 +77,40 @@ export const App: React.FC = () => {
     }
   }, [tree]);
 
-  // Push new state with history tracking
-  const updateTreeState = useCallback((newTree: FamilyTreeData, saveHistory = true) => {
-    if (saveHistory) {
-      setHistory((prev) => [...prev.slice(-30), tree]);
-      setFuture([]);
-    }
-    setTree(newTree);
-  }, [tree]);
+  // Push a new labeled snapshot onto the history timeline, discarding any redo branch
+  const updateTreeState = useCallback((newTree: FamilyTreeData, label: string) => {
+    setHistoryState((prev) => {
+      const base = prev.entries.slice(0, prev.index + 1);
+      const next = [...base, { label, timestamp: new Date().toISOString(), tree: newTree }];
+      const trimmed = next.length > MAX_HISTORY_ENTRIES ? next.slice(next.length - MAX_HISTORY_ENTRIES) : next;
+      return { entries: trimmed, index: trimmed.length - 1 };
+    });
+  }, []);
 
-  // Undo / Redo
+  // Silently replace the current snapshot's tree without adding a history entry (e.g. drag positioning)
+  const updateTreeSilent = useCallback((newTree: FamilyTreeData) => {
+    setHistoryState((prev) => {
+      const entries = [...prev.entries];
+      entries[prev.index] = { ...entries[prev.index], tree: newTree };
+      return { ...prev, entries };
+    });
+  }, []);
+
+  // Undo / Redo / Jump to any point in the timeline
   const handleUndo = useCallback(() => {
-    if (history.length === 0) return;
-    const previous = history[history.length - 1];
-    const newHistory = history.slice(0, -1);
-    setFuture((prev) => [tree, ...prev]);
-    setHistory(newHistory);
-    setTree(previous);
-  }, [history, tree]);
+    setHistoryState((prev) => (prev.index > 0 ? { ...prev, index: prev.index - 1 } : prev));
+  }, []);
 
   const handleRedo = useCallback(() => {
-    if (future.length === 0) return;
-    const next = future[0];
-    const newFuture = future.slice(1);
-    setHistory((prev) => [...prev, tree]);
-    setFuture(newFuture);
-    setTree(next);
-  }, [future, tree]);
+    setHistoryState((prev) => (prev.index < prev.entries.length - 1 ? { ...prev, index: prev.index + 1 } : prev));
+  }, []);
+
+  const handleJumpToHistory = useCallback((index: number) => {
+    setHistoryState((prev) => (index >= 0 && index < prev.entries.length ? { ...prev, index } : prev));
+  }, []);
+
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < historyEntries.length - 1;
 
   // Keyboard Shortcuts
   useEffect(() => {
@@ -102,6 +128,7 @@ export const App: React.FC = () => {
         setIsAnalyticsModalOpen(false);
         setIsExportModalOpen(false);
         setIsTemplatePickerOpen(false);
+        setIsHistoryModalOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -111,24 +138,31 @@ export const App: React.FC = () => {
   // Person CRUD Handlers
   const selectedPerson = tree.people.find((p) => p.id === selectedPersonId) || null;
 
+  const personDisplayName = (p: Pick<Person, 'firstName' | 'lastName'>) =>
+    `${p.firstName} ${p.lastName || ''}`.trim();
+
   const handleUpdatePerson = (updated: Person) => {
     const newPeople = tree.people.map((p) => (p.id === updated.id ? updated : p));
-    updateTreeState({
-      ...tree,
-      updatedAt: new Date().toISOString(),
-      people: newPeople,
-    });
+    updateTreeState(
+      {
+        ...tree,
+        updatedAt: new Date().toISOString(),
+        people: newPeople,
+      },
+      t('history.actionUpdatePerson', { name: personDisplayName(updated) })
+    );
   };
 
   const handleUpdatePersonPosition = (personId: string, x: number, y: number) => {
     const newPeople = tree.people.map((p) =>
       p.id === personId ? { ...p, x, y } : p
     );
-    // Silent update without pushing 50 history steps on dragging
-    setTree((prev) => ({ ...prev, people: newPeople }));
+    // Silent update without pushing a history step on dragging
+    updateTreeSilent({ ...tree, people: newPeople });
   };
 
   const handleDeletePerson = (personId: string) => {
+    const person = tree.people.find((p) => p.id === personId);
     const newPeople = tree.people.filter((p) => p.id !== personId);
     // Remove or clean marriages
     const newMarriages = tree.marriages
@@ -142,12 +176,15 @@ export const App: React.FC = () => {
       setSelectedPersonId(null);
     }
 
-    updateTreeState({
-      ...tree,
-      updatedAt: new Date().toISOString(),
-      people: newPeople,
-      marriages: newMarriages,
-    });
+    updateTreeState(
+      {
+        ...tree,
+        updatedAt: new Date().toISOString(),
+        people: newPeople,
+        marriages: newMarriages,
+      },
+      t('history.actionDeletePerson', { name: person ? personDisplayName(person) : '' })
+    );
   };
 
   // Add Relative Handler with smart positioning
@@ -248,12 +285,15 @@ export const App: React.FC = () => {
       }
     }
 
-    updateTreeState({
-      ...tree,
-      updatedAt: new Date().toISOString(),
-      people: [...tree.people, newPerson],
-      marriages: newMarriages,
-    });
+    updateTreeState(
+      {
+        ...tree,
+        updatedAt: new Date().toISOString(),
+        people: [...tree.people, newPerson],
+        marriages: newMarriages,
+      },
+      t('history.actionAddPerson', { name: personDisplayName(newPerson) })
+    );
 
     setIsAddRelativeOpen(false);
     setSelectedPersonId(newPersonId);
@@ -271,20 +311,23 @@ export const App: React.FC = () => {
     legend: LegendItem[];
     footnotes: FootnoteItem[];
   }) => {
-    updateTreeState({
-      ...tree,
-      updatedAt: new Date().toISOString(),
-      metadata,
-      sections,
-      legend,
-      footnotes,
-    });
+    updateTreeState(
+      {
+        ...tree,
+        updatedAt: new Date().toISOString(),
+        metadata,
+        sections,
+        legend,
+        footnotes,
+      },
+      t('history.actionUpdateMetadata')
+    );
     setIsMetadataModalOpen(false);
   };
 
   // Template switch
   const handleSelectTemplate = (tplData: FamilyTreeData) => {
-    updateTreeState(tplData);
+    updateTreeState(tplData, t('history.actionSelectTemplate', { name: tplData.metadata?.title || tplData.name }));
     setSelectedPersonId(null);
     setIsTemplatePickerOpen(false);
   };
@@ -300,7 +343,7 @@ export const App: React.FC = () => {
       alert(t('app.invalidJsonMetaSections'));
       return;
     }
-    updateTreeState(data as FamilyTreeData);
+    updateTreeState(data as FamilyTreeData, t('history.actionImportJson'));
     setSelectedPersonId(null);
   };
 
@@ -311,8 +354,8 @@ export const App: React.FC = () => {
         treeTitle={tree.metadata.title || tree.name}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        canUndo={history.length > 0}
-        canRedo={future.length > 0}
+        canUndo={canUndo}
+        canRedo={canRedo}
         onUndo={handleUndo}
         onRedo={handleRedo}
         onOpenTemplates={() => setIsTemplatePickerOpen(true)}
@@ -323,6 +366,7 @@ export const App: React.FC = () => {
         onOpenMetadata={() => setIsMetadataModalOpen(true)}
         onOpenAnalytics={() => setIsAnalyticsModalOpen(true)}
         onOpenExport={() => setIsExportModalOpen(true)}
+        onOpenHistory={() => setIsHistoryModalOpen(true)}
         onImportJson={handleImportJson}
         onToggleOutliner={() => setIsOutlinerOpen((prev) => !prev)}
         isOutlinerOpen={isOutlinerOpen}
@@ -428,6 +472,15 @@ export const App: React.FC = () => {
           currentTreeId={tree.id}
           onSelectTemplate={handleSelectTemplate}
           onClose={() => setIsTemplatePickerOpen(false)}
+        />
+      )}
+
+      {isHistoryModalOpen && (
+        <HistoryModal
+          entries={historyEntries}
+          currentIndex={historyIndex}
+          onJumpToIndex={handleJumpToHistory}
+          onClose={() => setIsHistoryModalOpen(false)}
         />
       )}
     </div>

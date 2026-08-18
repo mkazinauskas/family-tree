@@ -6,12 +6,10 @@ import {
   X, 
   Download, 
   Copy, 
-  Check, 
-  FileCode, 
-  Image, 
-  FileJson, 
-  Printer,
-  Sparkles
+  Check,
+  FileCode,
+  FileJson,
+  Printer
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 
@@ -22,7 +20,7 @@ interface ExportModalProps {
 
 export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
   const { t } = useTranslation();
-  const [exportType, setExportType] = useState<'html' | 'svg' | 'json' | 'png'>('html');
+  const [exportType, setExportType] = useState<'html' | 'svg' | 'json'>('html');
   const [copied, setCopied] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -61,36 +59,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
         a.download = `${treeNameSanitized}.json`;
         a.click();
         URL.revokeObjectURL(url);
-      } else if (exportType === 'png') {
-        // Render SVG to Canvas then export PNG
-        const svgString = generateTreeSvgString(tree);
-        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-        const URLObj = window.URL || window.webkitURL || window;
-        const blobURL = URLObj.createObjectURL(svgBlob);
-        const img = new window.Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const scale = 2; // 2x high resolution
-          canvas.width = (tree.metadata.canvasWidth || 1942) * scale;
-          canvas.height = (tree.metadata.canvasHeight || 1383) * scale;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.scale(scale, scale);
-            ctx.drawImage(img, 0, 0);
-            canvas.toBlob((blob) => {
-              if (blob) {
-                const pngUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = pngUrl;
-                a.download = `${treeNameSanitized}-2x.png`;
-                a.click();
-                URL.revokeObjectURL(pngUrl);
-              }
-            }, 'image/png');
-          }
-          URLObj.revokeObjectURL(blobURL);
-        };
-        img.src = blobURL;
       }
 
       confetti({
@@ -186,28 +154,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
             </div>
 
             <div
-              onClick={() => setExportType('png')}
-              style={{
-                background: exportType === 'png' ? 'rgba(2, 132, 199, 0.15)' : 'var(--bg-surface)',
-                borderColor: exportType === 'png' ? '#38bdf8' : 'var(--border-subtle)',
-                borderWidth: '1.5px',
-                borderStyle: 'solid',
-                borderRadius: 'var(--radius-md)',
-                padding: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '14px' }}>
-                <Image size={16} className="text-amber-400" />
-                <span>{t('exportModal.pngTitle')}</span>
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                {t('exportModal.pngDesc')}
-              </div>
-            </div>
-
-            <div
               onClick={() => setExportType('json')}
               style={{
                 background: exportType === 'json' ? 'rgba(2, 132, 199, 0.15)' : 'var(--bg-surface)',
@@ -233,12 +179,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
 
         {/* Footer */}
         <div className="modal-footer">
-          {exportType !== 'png' && (
-            <button className="btn btn-secondary" onClick={handleCopyCode}>
-              {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
-              <span>{copied ? t('exportModal.copied') : t('exportModal.copyCode')}</span>
-            </button>
-          )}
+          <button className="btn btn-secondary" onClick={handleCopyCode}>
+            {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
+            <span>{copied ? t('exportModal.copied') : t('exportModal.copyCode')}</span>
+          </button>
 
           <button className="btn btn-primary" onClick={handleDownload} disabled={isExporting}>
             <Download size={16} />

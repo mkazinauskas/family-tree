@@ -11,6 +11,8 @@ export const TAMOSIUS_GAIDYS_DATA: FamilyTreeData = {
     sheetNumber: 'LAPAS 3 / 3',
     canvasWidth: 1942,
     canvasHeight: 1383,
+    paperFormat: 'A3',
+    orientation: 'landscape',
     headerDividerY: 76,
     footerY: 1285,
     fontFamily: '"DejaVu Sans Condensed", "DejaVu Sans", "Outfit", "Inter", sans-serif',

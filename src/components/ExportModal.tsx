@@ -120,8 +120,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({ tree, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay">
+      <div className="modal-content">
         {/* Header */}
         <div className="modal-header">
           <div className="modal-title">

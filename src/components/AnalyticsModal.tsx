@@ -79,8 +79,8 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ tree, onClose })
   const stats = computeTreeStats(tree);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content modal-content-lg" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay">
+      <div className="modal-content modal-content-lg">
         {/* Header */}
         <div className="modal-header">
           <div className="modal-title">

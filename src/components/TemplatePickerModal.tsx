@@ -45,8 +45,8 @@ export const TemplatePickerModal: React.FC<TemplatePickerModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content modal-content-lg" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay">
+      <div className="modal-content modal-content-lg">
         {/* Header */}
         <div className="modal-header">
           <div className="modal-title">

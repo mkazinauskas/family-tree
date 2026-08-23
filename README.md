@@ -4,6 +4,8 @@
 
 Built with React, TypeScript, and Vite.
 
+🔗 **Live:** [mkazinauskas.github.io/family-tree](https://mkazinauskas.github.io/family-tree/)
+
 ---
 
 ## ✨ Highlights
